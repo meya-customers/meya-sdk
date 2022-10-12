@@ -1,0 +1,2 @@
+class TypeRegistryImportError(Exception):
+    pass
