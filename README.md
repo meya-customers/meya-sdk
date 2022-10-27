@@ -3,7 +3,7 @@ Welcome to the Meya SDK!
 
 First a bit of context about the Meya SDK. The Meya SDK is 
 implemented using async Python 3.
-This provides a development environment at is friendly for new developers, productive for experienced devs, and it runs fast at scale to process customer requests.
+This provides a development environment that is friendly for new developers, productive for experienced devs, and it runs fast at scale to process customer requests.
 
 All the code in this repo is available to use in your app at runtime when deployed to the Meya chatbot platform.
 
