@@ -46,7 +46,16 @@ class TwilioBaseIntegration(Integration):
         ),
     )
     phone_number: Optional[str] = element_field(
-        default=None, help="Twilio active number for use with Meya"
+        default=None,
+        help=(
+            "Twilio active number for use with Meya. Note, this can also be a "
+            "Message Service ID. For SMS/calls this will generally be a "
+            "standard E.164 number e.g. +15554440000. For WhatsApp this "
+            "needs to be a prefixed E.164 number e.g. "
+            "whatsapp:+15554440000. For a message service, you just use the "
+            "Message Service ID directly "
+            "e.g. MGXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX."
+        ),
     )
 
     def validate(self):

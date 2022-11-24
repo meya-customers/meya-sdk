@@ -6,6 +6,7 @@ from datetime import timedelta
 from meya.front.payload import FrontPayload
 from meya.front.payload.comment import FrontCommentGet
 from meya.front.payload.conversation import FrontConversationGet
+from meya.front.payload.message import FrontCustomChannelMetadata
 from meya.front.payload.message import FrontMessageGet
 from meya.front.payload.message import FrontPartnerChannelMessage
 from meya.front.payload.message import FrontPartnerChannelMetadata
@@ -60,6 +61,7 @@ class FrontEvent(FrontPayload):
             "archive": FrontArchiveConversationEvent,
             "reopen": FrontReopenConversationEvent,
             "restore": FrontRestoreConversationEvent,
+            "custom": FrontCustomMessageEvent,
         }
 
         event_subclass = ALL.get(payload_dict["type"])
@@ -175,3 +177,12 @@ class FrontChannelMessageEvent(FrontEvent):
     @property
     def conversation_id(self) -> str:
         return self.payload.links.related.conversation.split("/")[-1]
+
+
+@dataclass
+class FrontCustomMessageEvent(FrontEvent, FrontPartnerChannelMessage):
+    metadata: FrontCustomChannelMetadata = payload_field()
+
+    @property
+    def conversation_id(self) -> str:
+        return self.links.related.conversation.split("/")[-1]

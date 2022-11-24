@@ -9,6 +9,7 @@ from meya.front.payload.event import FrontActionEvent
 from meya.front.payload.event import FrontAssignEvent
 from meya.front.payload.event import FrontChannelMessageEvent
 from meya.front.payload.event import FrontCommentEvent
+from meya.front.payload.event import FrontCustomMessageEvent
 from meya.front.payload.event import FrontEvent
 from meya.front.payload.event import FrontEventCommentData
 from meya.front.payload.event import FrontEventMessageData
@@ -23,6 +24,8 @@ from meya.front.payload.event import FrontTagEvent
 from meya.front.payload.event import FrontTrashConversationEvent
 from meya.front.payload.event import FrontUnassignEvent
 from meya.front.payload.event import FrontUntagEvent
+from meya.front.payload.message import FrontCustomChannelHeaders
+from meya.front.payload.message import FrontCustomChannelMetadata
 from meya.front.payload.message import FrontMessageGet
 from meya.front.payload.message import FrontMessageGetMetadata
 from meya.front.payload.message import FrontMessageGetRecipient
@@ -39,65 +42,105 @@ from unittest.mock import MagicMock
 
 
 def test_front_message_event_from_dict():
-    assert (
-        FrontEvent.from_typed_dict(
-            {
-                "id": "msg_hihs0qv",
-                "body": "Hi there, welcome to Meya",
-                "text": "Hi there, welcome to Meya",
-                "type": "custom",
-                "blurb": "Hi there, welcome to Meya",
+    assert FrontEvent.from_typed_dict(
+        {
+            "id": "msg_hihs0qv",
+            "body": "Hi there, welcome to Meya",
+            "text": "Hi there, welcome to Meya",
+            "type": "custom",
+            "blurb": "Hi there, welcome to Meya",
+            "_links": {
+                "self": "https://api2.frontapp.com/messages/msg_hihs0qv",
+                "related": {
+                    "conversation": "https://api2.frontapp.com/conversations/cnv_8oyif9j",
+                    "message_replied_to": "https://api2.frontapp.com/messages/msg_hihs0qv/parent",
+                },
+            },
+            "author": {
+                "id": "tea_b2c7",
+                "email": "amanie@meya.ai",
                 "_links": {
-                    "self": "https://api2.frontapp.com/messages/msg_hihs0qv",
+                    "self": "https://api2.frontapp.com/teammates/tea_b2c7",
                     "related": {
-                        "conversation": "https://api2.frontapp.com/conversations/cnv_8oyif9j",
-                        "message_replied_to": "https://api2.frontapp.com/messages/msg_hihs0qv/parent",
+                        "inboxes": "https://api2.frontapp.com/teammates/tea_b2c7/inboxes",
+                        "conversations": "https://api2.frontapp.com/teammates/tea_b2c7/conversations",
                     },
                 },
-                "author": {
-                    "id": "tea_b2c7",
-                    "email": "amanie@meya.ai",
-                    "_links": {
-                        "self": "https://api2.frontapp.com/teammates/tea_b2c7",
-                        "related": {
-                            "inboxes": "https://api2.frontapp.com/teammates/tea_b2c7/inboxes",
-                            "conversations": "https://api2.frontapp.com/teammates/tea_b2c7/conversations",
-                        },
-                    },
-                    "is_admin": True,
-                    "username": "amanie",
-                    "last_name": "Ismail",
-                    "first_name": "Amanie",
-                    "is_blocked": False,
-                    "is_available": True,
+                "is_admin": True,
+                "username": "amanie",
+                "last_name": "Ismail",
+                "first_name": "Amanie",
+                "is_blocked": False,
+                "is_available": True,
+            },
+            "subject": "Re: ",
+            "version": "6e4b054926f829a8720cd56d911b7631-318607-1602100742100-a010",
+            "is_draft": True,
+            "metadata": {
+                "headers": {
+                    "in_reply_to": "imported@frontapp.com_8b717e98222977443321401cd6536370d9193071"
+                }
+            },
+            "created_at": 1602100742.249,
+            "error_type": "webhook_error",
+            "is_inbound": False,
+            "recipients": [
+                {
+                    "role": "from",
+                    "_links": {"related": {"contact": None}},
+                    "handle": "ba490680fd1da827",
                 },
-                "subject": "Re: ",
-                "version": "6e4b054926f829a8720cd56d911b7631-318607-1602100742100-a010",
-                "is_draft": True,
-                "metadata": {
-                    "headers": {
-                        "in_reply_to": "imported@frontapp.com_8b717e98222977443321401cd6536370d9193071"
-                    }
+                {
+                    "role": "to",
+                    "_links": {"related": {"contact": None}},
+                    "handle": "u8",
                 },
-                "created_at": 1602100742.249,
-                "error_type": "webhook_error",
-                "is_inbound": False,
-                "recipients": [
-                    {
-                        "role": "from",
-                        "_links": {"related": {"contact": None}},
-                        "handle": "ba490680fd1da827",
-                    },
-                    {
-                        "role": "to",
-                        "_links": {"related": {"contact": None}},
-                        "handle": "u8",
-                    },
-                ],
-                "attachments": [],
-            }
-        )
-        is None
+            ],
+            "attachments": [],
+        }
+    ) == FrontCustomMessageEvent(
+        id="msg_hihs0qv",
+        is_inbound=False,
+        body="Hi there, welcome to Meya",
+        links=FrontMessageGetRecipientLinks(
+            related=FrontMessageGetRecipientRelated(
+                conversation="https://api2.frontapp.com/conversations/cnv_8oyif9j"
+            )
+        ),
+        author=FrontTeammateGet(
+            id="tea_b2c7",
+            email="amanie@meya.ai",
+            first_name="Amanie",
+            last_name="Ismail",
+            username="amanie",
+            is_admin=True,
+            is_available=True,
+            is_blocked=False,
+        ),
+        created_at=1602100742.249,
+        recipients=[
+            FrontMessageGetRecipient(
+                role="from",
+                links=FrontMessageGetRecipientLinks(
+                    related=FrontMessageGetRecipientRelated(contact=None)
+                ),
+                handle="ba490680fd1da827",
+            ),
+            FrontMessageGetRecipient(
+                role="to",
+                links=FrontMessageGetRecipientLinks(
+                    related=FrontMessageGetRecipientRelated(contact=None)
+                ),
+                handle="u8",
+            ),
+        ],
+        text="Hi there, welcome to Meya",
+        type="custom",
+        metadata=FrontCustomChannelMetadata(
+            headers=FrontCustomChannelHeaders(
+                in_reply_to="imported@frontapp.com_8b717e98222977443321401cd6536370d9193071"
+            ),
+        ),
     )
 
 

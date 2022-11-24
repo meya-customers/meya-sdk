@@ -60,6 +60,12 @@ class TwilioWebhook(TwilioPayload):
 
     StructuredMessage: Optional[str] = payload_field(default=None)
 
+    ButtonText: Optional[str] = payload_field(default=None)
+    ButtonPayload: Optional[str] = payload_field(default=None)
+
+    ListId: Optional[str] = payload_field(default=None)
+    ListTitle: Optional[str] = payload_field(default=None)
+
     # media (up to 10 media items)
     MediaContentType0: Optional[str] = payload_field(default=None)
     MediaUrl0: Optional[str] = payload_field(default=None)

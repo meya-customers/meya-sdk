@@ -104,6 +104,16 @@ class FrontPartnerChannelMetadata(FrontPayload):
 
 
 @dataclass
+class FrontCustomChannelHeaders(FrontPayload):
+    in_reply_to: Optional[str] = payload_field(default=None)
+
+
+@dataclass
+class FrontCustomChannelMetadata(FrontPayload):
+    headers: Optional[FrontCustomChannelHeaders] = payload_field(default=None)
+
+
+@dataclass
 class FrontMessageReplyOptions(FrontPayload):
     tag_ids: Optional[List[str]] = payload_field(default=None)
     archive: Optional[bool] = payload_field(default=None)
