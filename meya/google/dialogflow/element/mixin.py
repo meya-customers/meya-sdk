@@ -34,20 +34,58 @@ class DialogflowMixin(Element):
     )
 
     integration: DialogflowIntegrationRef = element_field(
-        level=MetaLevel.INTERMEDIATE
+        level=MetaLevel.INTERMEDIATE,
+        help="The reference path to the configured Dialogflow integration.",
     )
-    language: Optional[str] = element_field(default=None)
+    language: Optional[str] = element_field(
+        default=None,
+        help=(
+            "The language code to be used for the Dialogflow API queries. If "
+            "this is not provided explicitly, the user's language will be "
+            "used. If the user has no language set, it will default to `en`."
+        ),
+    )
     intent: Optional[Union[str, List[str]]] = element_field(
-        default=None, level=MetaLevel.BASIC
+        default=None,
+        level=MetaLevel.BASIC,
+        help=(
+            "The specific intent (or list of intents) to match if the "
+            "confidence exceeds the specified `min_confidence`."
+        ),
     )
     intent_regex: Optional[str] = element_field(
-        default=None, level=MetaLevel.BASIC
+        default=None,
+        level=MetaLevel.BASIC,
+        help=(
+            "The regex pattern to match the returned intent against if the "
+            "confidence exceeds the specified `min_confidence`."
+        ),
     )
-    min_confidence: Optional[Real] = element_field(default=0.75)
-    max_confidence: Optional[Real] = element_field(default=1.0)
+    min_confidence: Optional[Real] = element_field(
+        default=0.75,
+        help=(
+            "The minimum confidence threshold that the intent needs to "
+            "achieve for the trigger to match."
+        ),
+    )
+    max_confidence: Optional[Real] = element_field(
+        default=1.0,
+        help=(
+            "The maximum confidence threshold that the intent should not "
+            "exceed for the trigger to match."
+        ),
+    )
     input_context: Optional[
         Union[bool, str, List[Union[str, DialogflowContext]]]
-    ] = element_field(default=True)
+    ] = element_field(
+        default=True,
+        help=(
+            "The optional input contexts that need to be applied to the "
+            "detect intent API call. Providing an input context will inform "
+            "Dialogflow to only evaluate intents that match the specified "
+            "input contexts."
+        ),
+    )
 
     def validate(self):
         super().validate()

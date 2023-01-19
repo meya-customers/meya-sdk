@@ -28,6 +28,18 @@ class FieldAction(SimpleEnum):
 
 @dataclass
 class FieldComponent(WidgetComponent):
+    """
+    A field component is a component that can be displayed both as a chat
+    input, or as form field in a page. This is the base field component that
+    is used by **all** other field components.
+
+    This is an **abstract** component and should **not** be used directly in
+    your BFML.
+
+    Check the [Widgets & Pages](https://docs.meya.ai/docs/widgets-and-pages) guide for more info on creating advanced
+    form wizards for collecting user input using field components.
+    """
+
     @dataclass
     class Next:
         field_action: FieldAction = response_field()

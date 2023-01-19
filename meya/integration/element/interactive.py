@@ -18,13 +18,31 @@ from typing import List
 
 @dataclass
 class InteractiveIntegration(Integration):
+    """
+    This is the base integration element that is used by **all** messaging
+    integration elements that can support markdown and typing indicators.
+
+    This is an **abstract** element and should **not** be used directly in
+    your BFML.
+
+    When you implement your own [custom integrations](https://docs.meya.ai/docs/custom-integrations)
+    you will inherit from this element's Python class.
+    """
+
     is_abstract: bool = meta_field(value=True)
 
-    markdown: MarkdownElementSpecUnion = element_field(default=False)
+    markdown: MarkdownElementSpecUnion = element_field(
+        default=False,
+        help=(
+            "The markdown features that are supported by this integration. "
+            "Check the [Markdown](https://docs.meya.ai/docs/markdown) guide "
+            "for more info."
+        ),
+    )
     typing: bool = element_field(
         default=True,
         help=(
-            "When set to 'False', all typing indicators received by the "
+            "When set to `false`, all typing indicators received by the "
             "integration will be ignored."
         ),
     )

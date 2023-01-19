@@ -60,16 +60,16 @@ from typing import cast
 class Element:
     id: Optional[str] = element_field(
         default=None,
-        help="Override the generated ID for this element",
+        help="Override the generated ID for this element.",
         level=MetaLevel.HIDDEN,
     )
     source_location: Optional[SourceLocation] = element_field(
         default=None,
-        help="Override the parsed source location for this element",
+        help="Override the parsed source location for this element.",
         level=MetaLevel.HIDDEN,
     )
     spec: Optional["Spec"] = context_field(
-        default=None, help="Override the original spec for this element"
+        default=None, help="Override the original spec for this element."
     )
     app_config: AppConfig = process_field()
     app_vault: AppVault = process_field()

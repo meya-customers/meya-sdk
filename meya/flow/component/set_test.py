@@ -57,7 +57,7 @@ async def test_flow_set_component_no_result():
     log_entry = create_log_message_entry(
         Level.ERROR,
         (
-            f'Could not set flow scope property "{flow_set}"'
+            f'Could not set flow scope variable "{flow_set}"'
             f" because flow.result is not set"
         ),
     )

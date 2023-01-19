@@ -16,7 +16,31 @@ from typing import Type
 @dataclass
 class NextComponent(Component):
     """
-    Continue to the next step in the flow.
+    Continue to the next step in the flow. The `next` component is mainly used
+    in **action fields** to control flow execution:
+
+    ```yaml
+    steps:
+      - if: (@ user.age > 18 )
+        then: next
+        else: end
+
+      - say: You're a young adult
+    ```
+
+    You can also optionally define flow scope data as part of the next
+    component.
+
+    ```yaml
+    steps:
+      - if: (@ user.age > 18 )
+        then:
+            next:
+              foo: bar
+        else: end
+
+      - say: "Flow scope data: (@ flow.foo )"
+    ```
     """
 
     extra_alias: str = meta_field(value="next")

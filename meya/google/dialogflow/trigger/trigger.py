@@ -20,6 +20,17 @@ class Expect(SimpleEnum):
 
 @dataclass
 class DialogflowTrigger(TextTrigger, DialogflowMixin):
+    """
+    This trigger will call your Dialogflow agent's "detect intent" API with
+    the user's input text and will match if the intent confidence threshold
+    is reached.
+
+    https://docs.meya.ai/docs/triggers-1#dialogflow-trigger
+    """
+
     expect: Optional[Expect] = element_field(
-        signature=True, default=None, level=MetaLevel.ADVANCED
+        signature=True,
+        default=None,
+        level=MetaLevel.ADVANCED,
+        help="Set to `dialogflow` to match Dialogflow intents.",
     )

@@ -32,7 +32,7 @@ class UserSetComponent(Component):
         if isinstance(self.user_set, str):
             if Trigger.RESULT_KEY not in self.entry.data:
                 raise self.process_error(
-                    f'Could not set user scope property "{self.user_set}"'
+                    f'Could not set user scope variable "{self.user_set}"'
                     f" because flow.result is not set"
                 )
             self.user[self.user_set] = self.entry.data.get(Trigger.RESULT_KEY)

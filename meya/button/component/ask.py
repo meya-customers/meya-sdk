@@ -31,7 +31,158 @@ class ComposerElementSpec(composer_spec.ComposerElementSpec):
 @dataclass
 class ButtonAskComponent(WidgetComponent):
     """
-    Show buttons for the user to select.
+    Show a set of buttons for the user to select.
+
+    ```yaml
+    - buttons:
+      - text: Option 1
+        result:
+          key: 1
+      - text: Option 2
+        result:
+          - two
+          - two
+      - text: Text 3
+      - text: Link 4
+        url: https://example.org/?n=5
+      - text: Static 5
+        button_id: _static_button
+        context:
+          product: marmalade
+      - text: Menu 6
+        menu:
+          - text: Result 10
+            result: 10
+          - text: Result 11
+            result: 11
+          - text: Result 20
+            result: 20
+      - text: Disabled
+        disabled: true
+    ```
+
+    Which produces the following in the [Meya Orb Web SDK](https://docs.meya.ai/docs/orb-web-sdk) client:
+
+    <img src="https://cdn.meya.ai/docs/images/meya-button-component-ask.png" width="400"/>
+
+    The ask buttons components is also an interactive component which allows you to set [quick replies](https://docs.meya.ai/docs/buttons-and-quick-replies), configure the
+    [input composer](https://docs.meya.ai/docs/composer), configure the [markdown support](https://docs.meya.ai/docs/markdown), set context data and attach
+    [component triggers](https://docs.meya.ai/docs/component-triggers).
+
+    Here is another example including some interactive component features:
+
+    ```yaml
+    - ask: Choose **one** of the following options.
+      buttons:
+      - text: Option 1
+        result:
+          key: 1
+      - text: Option 2
+        result:
+          - two
+          - two
+      - text: Text 3
+      - text: Link 4
+        url: https://example.org/?n=5
+      - text: Static 5
+        button_id: _static_button
+        context:
+          product: marmalade
+      - text: Menu 6
+        menu:
+          - text: Result 10
+            result: 10
+          - text: Result 11
+            result: 11
+          - text: Result 20
+            result: 20
+      - text: Disabled
+        disabled: true
+      quick_replies:
+        - Start over
+        - text: Transfer to an agent
+          action: next
+      composer:
+        visibility: collapse
+        collapse_placeholder: Click to type
+    ```
+
+    Which produces the following output:
+
+    <img src="https://cdn.meya.ai/docs/images/meya-button-component-ask-1.png" width="400"/>
+
+    **Note**, not all integrations support the **quick_replies**, **composer** and **markdown**
+    fields. Check the [compatibility matrix](https://docs.meya.ai/docs/card-compatibility-matrix)
+    and integration documentation to see which features the specific integration
+    you are using supports.
+
+    ### Button spec
+    Each item in the `buttons` field must contain a valid **button spec** that
+    specifies how the button should look and work. This **button spec** maps to
+    the [`ButtonElementSpec`](https://github.com/meya-customers/meya-sdk/blob/main/meya/button/spec.py) Python class which is used by both buttons and
+    quick replies.
+
+    This makes quick replies very similar to buttons, but where they differ is
+    that a quick reply can be configured to reply as a [text.say](https://docs.meya.ai/reference/meya-text-event-say) event instead of
+    a [button.click](https://docs.meya.ai/reference/meya-button-event-click)
+    event, whereas buttons can only create [button.click](https://docs.meya.ai/reference/meya-button-event-click)
+    events.
+
+    Check the [Buttons & Quick Replies guide](https://docs.meya.ai/docs/buttons-and-quick-replies) for more detail.
+
+    ### Pages support
+    The ask buttons component is also a widget component that can be displayed as a field
+    in a page.
+
+    Here is an example using the ask buttons component in a page:
+
+    ```yaml
+    - page:
+      - buttons:
+        - text: Option 1
+          result:
+            key: 1
+        - text: Option 2
+          result:
+            - two
+            - two
+        - text: Text 3
+        - text: Link 4
+          url: https://example.org/?n=5
+        - text: Static 5
+          button_id: _static_button
+          context:
+            product: marmalade
+        - text: Menu 6
+          menu:
+            - text: Result 10
+              result: 10
+            - text: Result 11
+              result: 11
+            - text: Result 20
+              result: 20
+        - text: Disabled
+          disabled: true
+    ```
+
+    Which produces the following output:
+
+    <img src="https://cdn.meya.ai/docs/images/meya-button-component-ask-page.png" width="400"/>
+
+    Check the [Widgets & Pages](https://docs.meya.ai/docs/widgets-and-pages) guide for more info on creating advanced
+    form wizards for collecting user input.
+
+    ### Input validation
+
+    The buttons component can be marked as `required`, and when the `required`
+    fields is set to `true` then the component will display an error if the
+    user does not select a button. This is only applicable when using the
+    buttons component in a page.
+
+    Here is an example of the error:
+
+    <img src="https://cdn.meya.ai/docs/images/meya-button-component-ask-page-1.png" width="400"/>
+
     """
 
     meta_name: str = meta_field(value="Buttons")
@@ -51,21 +202,47 @@ class ButtonAskComponent(WidgetComponent):
     )
 
     ask: Optional[str] = element_field(
-        default=None, help="Question to send to the user"
+        default=None, help="Question to send to the user."
     )
     buttons: List[ButtonElementSpecUnion] = element_field(
-        signature=True, help="List of buttons that the user can select"
+        signature=True,
+        help=(
+            "List of buttons that the user can select. Check the [button spec](https://docs.meya.ai/docs/buttons-and-quick-replies#button-spec) "
+            "guide for more info on the different fields."
+        ),
     )
     multi: bool = element_field(
-        default=False, help="Whether multiple buttons can be selected"
+        default=False,
+        help=(
+            "Whether multiple buttons can be selected at a time. This "
+            "is similar to how a typical checkbox behaves."
+        ),
     )
     composer: ComposerElementSpec = element_field(
-        default_factory=ComposerElementSpec, level=MetaLevel.ADVANCED
+        default_factory=ComposerElementSpec,
+        level=MetaLevel.ADVANCED,
+        help=(
+            "The composer spec that allows you to control the Orb's input "
+            "composer. Check the "
+            "[Composer](https://docs.meya.ai/docs/composer) guide for more "
+            "info."
+        ),
     )
-    label: Optional[str] = element_field(default=None)
-    required: bool = element_field(default=False)
+    label: Optional[str] = element_field(
+        default=None,
+        help="The label displayed above the set of buttons.",
+    )
+    required: bool = element_field(
+        default=False,
+        help="Specifies whether one of the buttons must be selected or not.",
+    )
     error_message: str = element_field(
-        default="Please select an option", level=MetaLevel.INTERMEDIATE
+        default="Please select an option",
+        level=MetaLevel.INTERMEDIATE,
+        help=(
+            "The error message that is displayed when the a selection is "
+            "required."
+        ),
     )
 
     @property

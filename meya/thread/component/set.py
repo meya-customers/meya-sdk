@@ -32,7 +32,7 @@ class ThreadSetComponent(Component):
         if isinstance(self.thread_set, str):
             if Trigger.RESULT_KEY not in self.entry.data:
                 raise self.process_error(
-                    f'Could not set thread scope property "{self.thread_set}"'
+                    f'Could not set thread scope variable "{self.thread_set}"'
                     f" because flow.result is not set"
                 )
             self.thread[self.thread_set] = self.entry.data.get(

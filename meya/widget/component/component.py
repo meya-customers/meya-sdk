@@ -34,6 +34,21 @@ class WidgetInputValidationError(Exception):
 
 @dataclass
 class WidgetComponent(InteractiveComponent):
+    """
+    This is an abstract component and is used by the following components:
+
+    - [button.ask](https://docs.meya.ai/reference/meya-button-component-ask)
+    - [file.v2](https://docs.meya.ai/reference/meya-file-component-v2)
+    - [image.v2](https://docs.meya.ai/reference/meya-image-component-v2)
+    - [text.info](https://docs.meya.ai/reference/meya-text-component-info)
+    - [widget.field](https://docs.meya.ai/reference/meya-widget-component-field)
+    - [widget.page](https://docs.meya.ai/reference/meya-widget-component-page)
+
+    **Note**, this component is only compatible with the
+    [Meya Orb Web SDK](https://docs.meya.ai/docs/orb-web-sdk)
+    and [Meya Orb Mobile SDK](https://docs.meya.ai/docs/orb-mobile-sdk).
+    """
+
     @dataclass
     class Response:
         result: Any = response_field(sensitive=True)

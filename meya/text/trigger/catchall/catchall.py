@@ -9,6 +9,8 @@ from meya.trigger.element import TriggerMatchResult
 class CatchallTrigger(TextTrigger):
     """
     Match any text from the user.
+
+    https://docs.meya.ai/docs/triggers-1#catchall-trigger
     """
 
     extra_alias: str = meta_field(value="catchall")

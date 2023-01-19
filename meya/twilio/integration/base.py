@@ -17,7 +17,7 @@ class TwilioBaseIntegration(Integration):
     is_abstract: bool = meta_field(value=True)
 
     account_sid: str = element_field(
-        help="Twilio project Account SID", meta_name="account SID"
+        help="Twilio project Account SID.", meta_name="account SID"
     )
     auth_token: Optional[str] = element_field(
         default=None,

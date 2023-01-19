@@ -56,6 +56,17 @@ class ComponentErrorResponse:
 
 @dataclass
 class Component(AbstractComponent, FlowControlMixin):
+    """
+    This is the base component element that is used by **all** other component
+    elements.
+
+    This is an **abstract** element and should **not** be used directly in
+    your BFML.
+
+    When you implement your own [custom components](https://docs.meya.ai/docs/getting-started-with-custom-components)
+    you will inherit from this element's Python class.
+    """
+
     OK_KEY: ClassVar[str] = "ok"
     RETRY_COUNT_KEY: ClassVar[str] = "retry_count"
 
@@ -66,17 +77,25 @@ class Component(AbstractComponent, FlowControlMixin):
 
     context: Dict[str, Any] = element_field(
         default_factory=dict,
-        help="Send context data with this component's event",
+        help="Send context data with this component's event.",
         level=MetaLevel.ADVANCED,
     )
     sensitive: bool = element_field(
         default=False,
-        help="Mark this component's event as sensitive",
+        help=(
+            "Mark this component's event as sensitive. This will encrypt the "
+            "event if the [Sensitive Data](https://docs.meya.ai/docs/how-to-set-up-the-sensitive-data-integration) "
+            "integration has been enabled."
+        ),
         level=MetaLevel.ADVANCED,
     )
     triggers: Optional[List[ComponentTriggerSpec]] = element_field(
         default_factory=list,
-        help="Activate these dynamic triggers when the component runs",
+        help=(
+            "Activate these dynamic triggers when the component runs. Check "
+            "the [component triggers guide](https://docs.meya.ai/docs/component-triggers) "
+            "for more info."
+        ),
         level=MetaLevel.ADVANCED,
     )
 

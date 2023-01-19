@@ -133,7 +133,9 @@ class RatingComponent(InteractiveComponent):
         help="A text string describing the purpose of the rating."
     )
     composer: ComposerElementSpec = element_field(
-        default_factory=ComposerElementSpec, level=MetaLevel.ADVANCED
+        default_factory=ComposerElementSpec,
+        level=MetaLevel.ADVANCED,
+        help="Override the Orb composer for this component.",
     )
 
     def validate(self):

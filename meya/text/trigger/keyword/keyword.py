@@ -13,6 +13,8 @@ from typing import Optional
 class KeywordTrigger(TextTrigger, IgnorecaseMixin):
     """
     Match exact text from the user.
+
+    https://docs.meya.ai/docs/triggers-1#keyword-trigger
     """
 
     meta_icon: IconElementSpecUnion = meta_field(
@@ -27,12 +29,12 @@ class KeywordTrigger(TextTrigger, IgnorecaseMixin):
 
     keyword: str = element_field(
         signature=True,
-        help="Exact keyword to match with user text",
+        help="Exact keyword to match with user text.",
         level=MetaLevel.VERY_BASIC,
     )
     ignorecase: Optional[bool] = element_field(
         default=None,
-        help="Ignore case when matching text",
+        help="Ignore case when matching text.",
         level=MetaLevel.INTERMEDIATE,
     )
 

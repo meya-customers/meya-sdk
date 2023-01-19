@@ -16,7 +16,26 @@ from typing import Type
 @dataclass
 class EndComponent(Component):
     """
-    End the current flow, optionally returning data.
+    End the current flow, optionally returning data to the calling flow.
+
+    ```yaml
+    steps:
+      - (option 1)
+      - say: This is option 1
+      - end:
+          selected_option: 1
+
+      - (option 2)
+      - say: This is option 2
+      - end:
+          selected_option: 2
+    ```
+
+    In this example the flow will end without processing the steps under
+    option 2, when option 1 is executed.
+
+    If this flow was called by another flow, then the selected_option variable
+    will be available in the calling flow's flow scope under (@ flow.selected_option ).
     """
 
     extra_alias: str = meta_field(value="end")
@@ -29,7 +48,13 @@ class EndComponent(Component):
     )
 
     end: Optional[dict] = element_field(
-        signature=True, default=None, meta_name="data"
+        signature=True,
+        default=None,
+        meta_name="data",
+        help=(
+            "Optionally specify any data that should be returned to a calling "
+            "flow if the current flow was called as a nested flow."
+        ),
     )
 
     async def start(self) -> List[Entry]:

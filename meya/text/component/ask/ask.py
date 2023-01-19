@@ -41,7 +41,59 @@ class ComposerElementSpec(composer_spec.ComposerElementSpec):
 @dataclass
 class AskComponent(InteractiveComponent):
     """
-    Get basic text input from the user.
+    Capture basic text input from the user. The ask component is the simplest
+    type of input component in the Meya SDK and simply display's a text message
+    to the user, and waits for input from the user.
+
+    ```yaml
+    - ask: What is your name?
+    ```
+
+    Which produces the following in the [Meya Orb Web SDK](https://docs.meya.ai/docs/orb-web-sdk) client:
+
+    <img src="https://cdn.meya.ai/docs/images/meya-text-component-ask.png" width="400"/>
+
+    The ask component is also an interactive component which allows you to set
+    [quick replies](https://docs.meya.ai/docs/buttons-and-quick-replies), configure the [input composer](https://docs.meya.ai/docs/composer), configure the [markdown support](https://docs.meya.ai/docs/markdown),
+    set context data and attach [component triggers](https://docs.meya.ai/docs/component-triggers).
+
+    Here is a more advanced example:
+
+    ```yaml
+    - ask: What is your **name**? [What's in a name...](https://en.wikipedia.org/wiki/Name)
+      quick_replies:
+        - text: Discover earth
+          action:
+            flow: flow.earth
+        - text: Talk to an agent
+          action:
+            flow: flow.agent
+      context:
+        foo: bar
+      composer:
+        focus: text
+        placeholder: Type your name here
+      markdown:
+        - format
+        - linkify
+    ```
+
+    Which produces the following output:
+
+    <img src="https://cdn.meya.ai/docs/images/meya-text-component-ask-1.png" width="400"/>
+
+    **Note**, not all integrations support the **quick_replies**, **composer** and **markdown**
+    fields. Check the [compatibility matrix](https://docs.meya.ai/docs/card-compatibility-matrix)
+    and integration documentation to see which features the specific integration
+    you are using supports.
+
+    ### Input validation
+
+    The ask component has no built-in input validation and will capture any
+    text input submitted by the user.
+
+    The user's input text is always stored in `(@ flow.result )` in your app's
+    [flow scope](https://docs.meya.ai/docs/scope#flow) data.
     """
 
     meta_icon: IconElementSpecUnion = meta_field(
@@ -56,14 +108,21 @@ class AskComponent(InteractiveComponent):
     )
 
     ask: Optional[str] = element_field(
-        signature=True, help="Question to send to the user"
+        signature=True, help="Question to send to the user."
     )
     retries: Real = element_field(default=float("inf"), level=MetaLevel.HIDDEN)
     error_message: str = element_field(
         default="Invalid input, please try again.", level=MetaLevel.HIDDEN
     )
     composer: ComposerElementSpec = element_field(
-        default_factory=ComposerElementSpec, level=MetaLevel.ADVANCED
+        default_factory=ComposerElementSpec,
+        level=MetaLevel.ADVANCED,
+        help=(
+            "The composer spec that allows you to control the Orb's input "
+            "composer. Check the "
+            "[Composer](https://docs.meya.ai/docs/composer) guide for more "
+            "info."
+        ),
     )
 
     async def start(self) -> List[Entry]:

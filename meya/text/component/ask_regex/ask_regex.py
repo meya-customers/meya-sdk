@@ -21,8 +21,57 @@ class AskRegexComposerComponentOkResponse:
 
 @dataclass
 class AskRegexComponent(AskCatchallComponent, IgnorecaseMixin):
-    regex: str = element_field(signature=True)
-    ignorecase: Optional[bool] = element_field(default=None)
+    """
+    Get basic text input from the user and validate the input against the
+    specified regex pattern.
+
+    ```yaml
+    - ask: What's your postal code?
+      regex: >
+        ^
+        ([A-Za-z]\d[A-Za-z])
+        [ -]?
+        (?P<second_part>\d[A-Za-z]\d)
+        $
+      error_message: Invalid postal code, please try again.
+      retries: .inf
+    ```
+
+    Which produces the following output:
+
+    <img src="https://cdn.meya.ai/docs/images/meya-text-component-ask_regex.png" width="400"/>
+
+    ### Input validation
+    Once the user submits their input, it is evaluated against the specified
+    regex pattern, and if the pattern matches then the component will store the
+    value in `(@ flow.result )` in your app's [flow scope](https://docs.meya.ai/docs/scope#flow) data. If
+    you use regex groups the group results will also be stored in the flow scope
+    in `(@ flow.groups )`.
+
+    Note, Meya uses the [Python regular expression syntax](https://docs.python.org/3/library/re.html#regular-expression-syntax) for all regex patterns.
+
+    ### Retries
+    By default the component will retry until the user's input matches the input.
+    However, you can override this by setting an explicit `retries` value.
+
+    The component will continue to the next flow step once the retry value has
+    been reached. In this case `(@ flow.result )` will be `None`.
+    """
+
+    regex: str = element_field(
+        signature=True,
+        help=(
+            "The regex (regular expression) pattern to validate the user "
+            "input against."
+        ),
+    )
+    ignorecase: Optional[bool] = element_field(
+        default=None,
+        help=(
+            "Ignore the case of the user input when validating against the "
+            "regex pattern."
+        ),
+    )
 
     def trigger(self, data: Any = None) -> TriggerActivateEntry:
         return RegexTrigger(

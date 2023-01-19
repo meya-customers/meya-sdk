@@ -66,7 +66,7 @@ async def test_thread_set_component_no_result():
     log_entry = create_log_message_entry(
         Level.ERROR,
         (
-            f'Could not set thread scope property "{thread_set}"'
+            f'Could not set thread scope variable "{thread_set}"'
             f" because flow.result is not set"
         ),
     )

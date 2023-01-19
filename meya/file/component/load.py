@@ -16,16 +16,64 @@ from typing import Optional
 @dataclass
 class FileLoadComponent(Component):
     """
-    file_path: relative file path from the app root including filename
-    render: if True, renders using Meya's jinja2 templating
-    context: dict used for jinja2 templating, if None defaults to app render context
+    Load a text file from your app's code repo and store it in
+    `(@ flow.result )` in the [flow scope](https://docs.meya.ai/docs/scope#flow).
+
+    You can also treat this text file as a template file that includes
+    [Meya template](https://docs.meya.ai/docs/jinja2-syntax) tags that can
+    be rendered using a template context dictionary.
+
+    This component is particularly useful when you need to send HTML emails
+    and would like to use an email template to standardize the email design.
+
+    The following example will load the `templates/email.html` template file
+    and render it using the Meya template syntax. The `template_context` gets
+    made available to the template rendering engine so you would
+    be able to reference the user's name using `(@ name )`.
+
+    ```yaml
+    steps:
+      - file_path: templates/email.html
+        template: true
+        template_context:
+          flow: (@ flow )
+          name: (@ user.name )
+          email: (@ user.email )
+          foo: bar
+    ```
+
+    **template/email.html**
+    ```html
+    <html>
+      <body>
+        <p>
+          Hi, (@ name )
+        </p>
+        <p>
+            This is to notify you that your email address <b>(@ email )</b> has
+            been changed to <b>(@ flow.new_email)</b>
+        </p>
+        <p>
+            Thanks!
+        </p>
+      </body>
+    </html>
+    ```
     """
 
     run_in_app_container: bool = meta_field(value=True)
 
-    file_path: str = element_field(signature=True)
-    template: bool = element_field(default=False)
-    template_context: Optional[Dict[str, Any]] = element_field(default=None)
+    file_path: str = element_field(
+        signature=True,
+        help="The file path relative to the app's root folder.",
+    )
+    template: bool = element_field(
+        default=False,
+        help="The file must be rendered using the Meya template syntax.",
+    )
+    template_context: Optional[Dict[str, Any]] = element_field(
+        default=None, help="Optional context variables used in the template."
+    )
 
     @dataclass
     class Response:

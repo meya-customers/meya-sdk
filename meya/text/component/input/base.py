@@ -23,15 +23,47 @@ class ComposerElementSpec(composer_spec.ComposerElementSpec):
 
 @dataclass
 class BaseTextInputComponent(FieldComponent):
+    """
+    This is the base text input component that is used by **all** other text
+    input field components, and defines some common fields that are used by
+    all text input components.
+
+    This is base component and should **not** be used directly in your BFML.
+
+    Check the [Widgets & Pages](https://docs.meya.ai/docs/widgets-and-pages) guide for more info on creating advanced
+    form wizards for collecting user input using field components.
+    """
+
     @dataclass
     class Response(FieldComponent.Response):
         result: str = response_field(sensitive=True)
 
-    icon: Optional[IconElementSpecUnion] = element_field(default=None)
-    placeholder: Optional[str] = element_field(default=None)
-    default: Optional[str] = element_field(default=None)
+    icon: Optional[IconElementSpecUnion] = element_field(
+        default=None,
+        help=(
+            "The icon spec or URL to use for the input field. See the "
+            "[Icons](https://docs.meya.ai/docs/icons) guide for more info."
+        ),
+    )
+    placeholder: Optional[str] = element_field(
+        default=None,
+        help=(
+            "The input field's placeholder text. This is displayed when the"
+            "field has not user specified text."
+        ),
+    )
+    default: Optional[str] = element_field(
+        default=None, help="The input's default value."
+    )
     composer: ComposerElementSpec = element_field(
-        default_factory=ComposerElementSpec, level=MetaLevel.ADVANCED
+        default_factory=ComposerElementSpec,
+        level=MetaLevel.ADVANCED,
+        help=(
+            "The composer spec that allows you to control the Orb's input "
+            "composer. Check the "
+            "[Composer](https://docs.meya.ai/docs/composer) guide for more "
+            "info."
+        ),
     )
 
     input_type: ClassVar[TextInputType] = TextInputType.TEXT

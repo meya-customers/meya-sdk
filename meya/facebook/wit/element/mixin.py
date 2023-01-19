@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from meya.core.meta_level import MetaLevel
 from meya.element import Element
 from meya.element.field import element_field
 from meya.element.field import meta_field
@@ -17,18 +18,37 @@ from typing import Union
 class WitMixin(Element):
     is_abstract: bool = meta_field(value=True)
 
-    integration: WitIntegrationRef = element_field()
+    integration: WitIntegrationRef = element_field(
+        level=MetaLevel.INTERMEDIATE,
+        help="The reference path to the configured Dialogflow integration.",
+    )
     intent: Union[None, str, List[str]] = element_field(
-        default=None, help="Intent or list of intents expected to fire trigger"
+        default=None,
+        help=(
+            "The specific intent (or list of intents) to match if the "
+            "confidence exceeds the specified `min_confidence`."
+        ),
     )
     intent_regex: Optional[str] = element_field(
-        default=None, help="Intent regex expected to fire trigger"
+        default=None,
+        help=(
+            "The regex pattern to match the returned intent against if the "
+            "confidence exceeds the specified `min_confidence`."
+        ),
     )
     min_confidence: Optional[Real] = element_field(
-        default=0.75, help="Minimum confidence in order to fire trigger"
+        default=0.75,
+        help=(
+            "The minimum confidence threshold that the intent needs to "
+            "achieve for the trigger to match."
+        ),
     )
     max_confidence: Optional[Real] = element_field(
-        default=1.0, help="Maximum confidence in order to fire trigger"
+        default=1.0,
+        help=(
+            "The maximum confidence threshold that the intent should not "
+            "exceed for the trigger to match."
+        ),
     )
     locale: Optional[str] = element_field(
         default=None,
@@ -41,18 +61,18 @@ class WitMixin(Element):
     coords: Optional[WitContextCoords] = element_field(
         default=None,
         help=(
-            "Coordinates of the user. "
+            "The user's location coordinates. "
             "Must be in the form of an object with 'lat': float and "
             "'long': float. "
             "This field is used to improve ranking for wit/location's "
-            "resolved values"
+            "resolved values."
         ),
     )
     timezone: Optional[Timezone] = element_field(
         default=None,
         help=(
             "Must be a valid IANA timezone. "
-            "Used only if no reference_time is provided. "
+            "Used only if no `reference_time` is provided. "
             "Example: 'America/Los_Angeles'"
         ),
     )
@@ -60,7 +80,7 @@ class WitMixin(Element):
         default=None,
         help=(
             "Local date and time of the user in ISO8601 format. "
-            "Do not use UTC time"
+            "Do not use UTC time."
         ),
     )
 

@@ -104,6 +104,17 @@ class IntegrationFilter:
 
 @dataclass
 class Integration(Element):
+    """
+    This is the base integration element that is used by **all** other
+    integration elements.
+
+    This is an **abstract** element and should **not** be used directly in
+    your BFML.
+
+    When you implement your own [custom integrations](https://docs.meya.ai/docs/custom-integrations)
+    you will inherit from this element's Python class.
+    """
+
     NAME: ClassVar[str] = "generic"
 
     current: ClassVar = cast(
@@ -124,15 +135,33 @@ class Integration(Element):
 
     enabled: bool = element_field(
         default=True,
-        help="Enables the integration, allowing it to process events and HTTP entries",
+        help=(
+            "Enables the integration, allowing it to process events and "
+            "HTTP/WS entries."
+        ),
     )
     filter: IntegrationFilter = element_field(
-        default_factory=IntegrationFilter
+        default_factory=IntegrationFilter,
+        help=(
+            "Specifies the GridQL to filter `rx_sub`, `rx`, `tx`, `tx_pub`"
+            "entries. Check the [integration filtering guide](https://docs.meya.ai/docs/integrations-1#filtering-requests--events)"
+            "for more info."
+        ),
     )
-    verify_token: Optional[str] = element_field(default=None)
+    verify_token: Optional[str] = element_field(
+        default=None,
+        help=(
+            "The token to be verified for each incoming request. You need to "
+            "add the `verify_token=YOUR_TOKEN` query parameter to integration's "
+            "webhook URL."
+        ),
+    )
     max_attachment_size: Optional[int] = element_field(
         default=None,
-        help="Controls maximum attachment size supported by the integration in bytes",
+        help=(
+            "Controls maximum attachment size supported by the integration in "
+            "bytes."
+        ),
     )
 
     @dataclass

@@ -15,11 +15,51 @@ from typing import Type
 
 @dataclass
 class CondComponent(Component):
+    """
+    Specify multiple evaluation criteria and run an action if the criteria
+    evaluates to `true`.
+
+    ```yaml
+    - cond:
+       - (@ user.age < 18):
+           flow: flow.confirm_age
+       - (@ user.age >= 18 and user.age < 65 ):
+           jump: next
+       - (@ user.age >= 65):
+           flow: flow.retired
+      default: next
+    ```
+
+    Similar to the [`flow.if`](https://docs.meya.ai/reference/meya-flow-component-if) component's
+    `if` field, the evaluation criteria must evaluate to either `true`
+    or `false`, and thus we can use [Meya template syntax](https://docs.meya.ai/docs/jinja2-syntax) to
+    create complex evaluation criteria using a combination of [template operators](https://docs.meya.ai/docs/jinja2-syntax#operators)
+    and flow/thread/user scope variables.
+
+    Also, each condition in the `cond` field must contain a valid **action field**,
+    meaning the field takes an action spec which maps to the [`ActionComponentSpec`](https://github.com/meya-customers/meya-sdk/blob/main/meya/component/spec.py)
+    Python class. This allows you to execute any component, but you will mostly
+    use one of the flow control components.
+    """
+
     meta_level: float = meta_field(value=MetaLevel.INTERMEDIATE)
     meta_tags: List[Type[MetaTag]] = meta_field(value=[BotFlowTag])
 
-    cond: List[Dict[Any, ActionComponentSpec]] = element_field(signature=True)
-    default: ActionComponentSpec = element_field()
+    cond: List[Dict[Any, ActionComponentSpec]] = element_field(
+        signature=True,
+        help=(
+            "Contains a set of evaluation criteria that will be evaluated in "
+            "order starting with the first evaluation criteria. The "
+            "evaluation criteria is expressed using Meya's "
+            "[template syntax](https://docs.meya.ai/docs/jinja2-syntax)."
+        ),
+    )
+    default: ActionComponentSpec = element_field(
+        help=(
+            "This is the default action should none of the evaluation "
+            "criteria evaluate to `True`."
+        )
+    )
 
     async def start(self) -> List[Entry]:
         for cond_branch in self.cond:

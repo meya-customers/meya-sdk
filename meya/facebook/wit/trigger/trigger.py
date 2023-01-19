@@ -19,4 +19,12 @@ class Expect(SimpleEnum):
 
 @dataclass
 class WitTrigger(TextTrigger, WitMixin):
+    """
+    This trigger will call your Wit model's "message meaning" API with
+    the user's input text and will match if the intent confidence threshold
+    is reached.
+
+    https://docs.meya.ai/docs/triggers-1#wit-trigger
+    """
+
     expect: Optional[Expect] = element_field(signature=True, default=None)

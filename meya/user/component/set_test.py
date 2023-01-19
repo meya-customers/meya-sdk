@@ -66,7 +66,7 @@ async def test_user_set_component_no_result():
     log_entry = create_log_message_entry(
         Level.ERROR,
         (
-            f'Could not set user scope property "{user_set}"'
+            f'Could not set user scope variable "{user_set}"'
             f" because flow.result is not set"
         ),
     )

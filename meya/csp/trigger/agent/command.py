@@ -13,8 +13,22 @@ from typing import Optional
 
 @dataclass
 class AgentCommandTrigger(TextTrigger, IgnorecaseMixin):
-    agent_command: str = element_field(signature=True)
-    ignorecase: Optional[bool] = element_field(default=None)
+    """
+    Match the agent command against a regex pattern.
+
+    Meya uses the [Python regular expression syntax](https://docs.python.org/3/library/re.html#regular-expression-syntax).
+    """
+
+    agent_command: str = element_field(
+        signature=True,
+        help=(
+            "The regex (regular expression) pattern to match the agent "
+            "input against."
+        ),
+    )
+    ignorecase: Optional[bool] = element_field(
+        default=None, help="Ignore the case of the agent command."
+    )
     entry: AgentCommandEvent = process_field()
     encrypted_entry: AgentCommandEvent = process_field()
 

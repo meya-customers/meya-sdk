@@ -31,19 +31,21 @@ class TileCell:
 class TileCommonSpec:
     title: Optional[str] = field(
         default=None,
-        metadata=dict(help="Title for the tile", level=MetaLevel.VERY_BASIC),
+        metadata=dict(help="Title for the tile.", level=MetaLevel.VERY_BASIC),
     )
     description: Optional[str] = field(
         default=None,
-        metadata=dict(help="Description for the tile", level=MetaLevel.BASIC),
+        metadata=dict(help="Description for the tile.", level=MetaLevel.BASIC),
     )
     image: Optional[TileImage] = field(
         default=None,
-        metadata=dict(help="Image for the tile", level=MetaLevel.BASIC),
+        metadata=dict(help="Image for the tile.", level=MetaLevel.BASIC),
     )
     rows: List[List[TileCell]] = field(
         default_factory=list,
-        metadata=dict(help="Rows of data for the tile", level=MetaLevel.BASIC),
+        metadata=dict(
+            help="Rows of data for the tile.", level=MetaLevel.BASIC
+        ),
     )
 
 

@@ -29,7 +29,7 @@ class UserTryLookupComponent(Component):
     meta_tags: List[Type[MetaTag]] = meta_field(value=[UserManagementTag])
 
     user_try_lookup: str = element_field(
-        signature=True, help="The integration ID to look up"
+        signature=True, help="The integration user ID to look up."
     )
     integration: IntegrationRef = element_field()
 

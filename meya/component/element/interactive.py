@@ -20,6 +20,18 @@ from typing import Optional
 
 @dataclass
 class InteractiveComponent(Component):
+    """
+    This is the base component element that is used by **all** components that
+    can control interactivity with quick replies, composer settings, header,
+    and markdown.
+
+    This is an **abstract** element and should **not** be used directly in
+    your BFML.
+
+    When you implement your own [custom interactive components](https://docs.meya.ai/docs/getting-started-with-custom-components)
+    you will inherit from this element's Python class.
+    """
+
     is_abstract: bool = meta_field(value=True)
 
     quick_replies: List[ButtonElementSpecUnion] = element_field(
@@ -30,22 +42,26 @@ class InteractiveComponent(Component):
             - text: No
               action: next
         """,
-        help="List of buttons that the user can select for replies",
+        help="List of buttons that the user can select for replies.",
         level=MetaLevel.VERY_BASIC,
     )
     composer: ComposerElementSpec = element_field(
         default_factory=ComposerElementSpec,
-        help="Override the Orb composer for this component",
+        help="Override the Orb composer for this component.",
         level=MetaLevel.ADVANCED,
     )
     header: HeaderElementSpec = element_field(
         default_factory=HeaderElementSpec,
-        help="Override the header for this component",
+        help="Override the header for this component.",
         level=MetaLevel.ADVANCED,
     )
     markdown: Optional[MarkdownElementSpecUnion] = element_field(
         default=None,
-        help="Override the bot Markdown mode for this component",
+        help=(
+            "Override the bot Markdown mode for this component. "
+            "Check the [Markdown](https://docs.meya.ai/docs/markdown) guide "
+            "for more info."
+        ),
         level=MetaLevel.ADVANCED,
     )
 

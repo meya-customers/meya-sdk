@@ -11,6 +11,24 @@ from meya.trigger.element import TriggerResponse
 
 @dataclass
 class MediaTrigger(Trigger):
+    """
+    Match when a media file is uploaded by a user.
+
+    When the trigger matches, the media file's URL is saved in the
+    `(@ flow.result )` [flow scope](https://docs.meya.ai/docs/scope#flow)
+    variable.
+
+    This trigger also has a BFML alias that allows you to reference the
+    trigger using the `media` word.
+
+    ```yaml
+    triggers:
+      - media
+    steps:
+      - say: "Uploaded file: (@ flow.result )"
+    ```
+    """
+
     extra_alias: str = meta_field(value="media")
 
     entry: MediaEvent = process_field()

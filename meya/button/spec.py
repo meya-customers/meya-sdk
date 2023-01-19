@@ -54,7 +54,10 @@ class AbstractButtonElementSpec(ButtonCommonSpec, ABC):
     action: Optional[ActionComponentSpec] = field(
         default=None,
         metadata=dict(
-            help="Action executed if button clicked",
+            help=(
+                "Action executed if button clicked. Check the [Action](https://docs.meya.ai/docs/triggers-1#action) "
+                "guide for more info."
+            ),
             level=MetaLevel.VERY_BASIC,
         ),
     )
@@ -128,7 +131,7 @@ class AbstractButtonEventSpec(ButtonCommonSpec, ABC):
 class ButtonElementSpec(AbstractButtonElementSpec):
     text: Optional[str] = field(
         default=None,
-        metadata=dict(help="Button text", level=MetaLevel.VERY_BASIC),
+        metadata=dict(help="Button text.", level=MetaLevel.VERY_BASIC),
     )
 
     @staticmethod

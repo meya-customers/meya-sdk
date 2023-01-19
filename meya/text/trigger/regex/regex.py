@@ -21,12 +21,28 @@ class RegexTriggerResponse:
 
 @dataclass
 class RegexTrigger(TextTrigger, IgnorecaseMixin):
+    """
+    Match the user text against a regular expression.
+
+    https://docs.meya.ai/docs/triggers-1#regex-trigger
+
+    Meya uses the [Python regular expression syntax](https://docs.python.org/3/library/re.html#regular-expression-syntax).
+    """
+
     GROUPS_KEY = "groups"
 
     meta_level: float = meta_field(value=MetaLevel.BASIC)
 
-    regex: str = element_field(signature=True)
-    ignorecase: Optional[bool] = element_field(default=None)
+    regex: str = element_field(
+        signature=True,
+        help=(
+            "The regex (regular expression) pattern to match the user input "
+            "text against."
+        ),
+    )
+    ignorecase: Optional[bool] = element_field(
+        default=None, help="Ignore the case when matching the user text."
+    )
 
     async def match(self) -> TriggerMatchResult:
         match = self.search_regex(

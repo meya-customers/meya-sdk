@@ -61,6 +61,17 @@ class TriggerMatchFailureResult(TriggerMatchResult):
 
 @dataclass
 class Trigger(Element):
+    """
+    This is the base trigger element that is used by **all** other trigger
+    elements.
+
+    This is an **abstract** element and should **not** be used directly in
+    your BFML.
+
+    When you implement your own [custom triggers](https://docs.meya.ai/docs/custom-triggers)
+    you will inherit from this element's Python class.
+    """
+
     MAX_CONFIDENCE = 1.0
     MIN_CONFIDENCE = 0.001
     NO_CONFIDENCE = 0.0
@@ -77,21 +88,32 @@ class Trigger(Element):
 
     bot: Optional[BotRef] = element_field(
         default=None,
-        help="Bot used to evaluate this trigger",
+        help="Bot used to evaluate this trigger.",
         level=MetaLevel.ADVANCED,
     )
     action: Union[TriggerActionEntry, ActionComponentSpec] = element_field(
-        help="Action executed if this trigger matches",
+        help=(
+            "Action executed if this trigger matches. Check the  "
+            "[trigger action guide](https://docs.meya.ai/docs/triggers-1#action) "
+            "for more info."
+        ),
         level=MetaLevel.VERY_BASIC,
     )
     when: Any = element_field(
         default_factory=MISSING_FACTORY,
-        help="Custom condition for when to evaluate this trigger",
+        help=(
+            "Custom condition for when to evaluate this trigger. Check the "
+            "[trigger when guide](https://docs.meya.ai/docs/triggers-1#when) "
+            "for more info."
+        ),
         level=MetaLevel.INTERMEDIATE,
     )
     confidence: Optional[Real] = element_field(
         default=None,
-        help="Custom confidence override value for trigger matches",
+        help=(
+            "Override the default confidence with a custom value for trigger "
+            "matches."
+        ),
         level=MetaLevel.ADVANCED,
     )
     entry: Event = process_field()
