@@ -210,6 +210,14 @@ class Element:
         )
 
     @classmethod
+    async def render_dict(
+        cls, context: Dict[str, Any], data: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        return await AbstractElementProcessor.current.get().render_dict(
+            context, data
+        )
+
+    @classmethod
     async def render_from_spec(cls, spec: "Spec"):
         if spec.is_partial:
             spec = cls.resolve_spec(Ref(spec.id))
@@ -488,9 +496,20 @@ class AbstractElementProcessor(ABC):
     async def render_spec_data(self, spec: Spec) -> Spec:
         pass
 
+    @abstractmethod
+    async def render_dict(
+        self, context: Dict[str, Any], data: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        pass
+
 
 class StaticElementProcessor(AbstractElementProcessor):
     async def render_spec_data(
         self, spec: Spec
     ) -> Tuple[Dict[str, Any], List[Entry]]:
+        raise NotImplementedError()
+
+    async def render_dict(
+        self, context: Dict[str, Any], data: Dict[str, Any]
+    ) -> Dict[str, Any]:
         raise NotImplementedError()

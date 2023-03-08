@@ -33,8 +33,11 @@ class HistoryView:
         end: str = "+",
         start: str = "-",
         count: int = 256,
+        include_internal: bool = False,
     ) -> List[Event]:
-        return await self.db.query_event_ledger(thread_id, end, start, count)
+        return await self.db.query_event_ledger(
+            thread_id, end, start, count, include_internal
+        )
 
     async def get_redacted_thread_events(
         self,

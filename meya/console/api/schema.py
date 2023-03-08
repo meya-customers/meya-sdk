@@ -32,11 +32,46 @@ class AppTypeEnum(sgqlc.types.Enum):
 
 Boolean = sgqlc.types.Boolean
 
+
+class CardType(sgqlc.types.Enum):
+    __schema__ = schema
+    __choices__ = (
+        "VISA",
+        "MASTER",
+        "DISCOVER",
+        "AMERICAN_EXPRESS",
+        "DINERS_CLUB",
+        "JCB",
+        "SWITCH",
+        "SOLO",
+        "DANKFORT",
+        "MAESTRO",
+        "LASER",
+        "FORBRUGSFORENINGEN",
+    )
+
+
+class CurrentVault(sgqlc.types.Enum):
+    __schema__ = schema
+    __choices__ = ("AUTHORIZENET", "STRIPE")
+
+
+class DataSourceType(sgqlc.types.Enum):
+    __schema__ = schema
+    __choices__ = ("WEB_CRAWLER", "SITEMAP", "URL_LIST", "TEXT")
+
+
 DateTime = sgqlc.types.datetime.DateTime
 
 Float = sgqlc.types.Float
 
 ID = sgqlc.types.ID
+
+
+class IndexType(sgqlc.types.Enum):
+    __schema__ = schema
+    __choices__ = ("VECTOR",)
+
 
 Int = sgqlc.types.Int
 
@@ -46,12 +81,63 @@ class InviteState(sgqlc.types.Enum):
     __choices__ = ("CREATED", "PENDING", "RESENT", "REVOKED")
 
 
+class ItemIndexState(sgqlc.types.Enum):
+    __schema__ = schema
+    __choices__ = ("FAILED", "INDEXED", "INDEXING", "QUEUED", "NOT_INDEXED")
+
+
+class ItemType(sgqlc.types.Enum):
+    __schema__ = schema
+    __choices__ = ("WEB_PAGE", "TEXT", "INTENT")
+
+
 class JSONString(sgqlc.types.Scalar):
     __schema__ = schema
 
 
+class JobState(sgqlc.types.Enum):
+    __schema__ = schema
+    __choices__ = (
+        "CANCELLED",
+        "COMPLETE",
+        "CRAWLING",
+        "FAILED",
+        "INDEXING",
+        "QUEUED",
+        "RUNNING",
+    )
+
+
+class JobType(sgqlc.types.Enum):
+    __schema__ = schema
+    __choices__ = ("IMPORT_DATA", "INDEX_ITEMS")
+
+
+class LlmProvider(sgqlc.types.Enum):
+    __schema__ = schema
+    __choices__ = ("OPENAI",)
+
+
 class Money(sgqlc.types.Scalar):
     __schema__ = schema
+
+
+class OpenaiTextModel(sgqlc.types.Enum):
+    __schema__ = schema
+    __choices__ = (
+        "GPT_3_5_TURBO_0301",
+        "GPT_3_5_TURBO",
+        "TEXT_DAVINCI_003",
+        "TEXT_DAVINCI_002",
+        "TEXT_CURIE_001",
+        "TEXT_BABBAGE_001",
+        "TEXT_ADA_001",
+    )
+
+
+class PaymentType(sgqlc.types.Enum):
+    __schema__ = schema
+    __choices__ = ("CREDIT_CARD", "BANK_ACCOUNT", "PAYPAL_ACCOUNT")
 
 
 class PushAppType(sgqlc.types.Enum):
@@ -80,6 +166,27 @@ class PushState(sgqlc.types.Enum):
 String = sgqlc.types.String
 
 
+class SubscriptionState(sgqlc.types.Enum):
+    __schema__ = schema
+    __choices__ = (
+        "ACTIVE",
+        "CANCELED",
+        "EXPIRED",
+        "ON_HOLD",
+        "PAST_DUE",
+        "SOFT_FAILURE",
+        "TRIALING",
+        "TRIAL_ENDED",
+        "UNPAID",
+        "SUSPENDED",
+        "AWAITING_SIGNUP",
+        "ASSESSING",
+        "FAILED_TO_CREATE",
+        "PAUSED",
+        "PENDING",
+    )
+
+
 class UserFlowEditorMode(sgqlc.types.Enum):
     __schema__ = schema
     __choices__ = ("NONE", "VISUAL", "CODE")
@@ -101,9 +208,183 @@ class AccountLimitsInput(sgqlc.types.Input):
     production_apps = sgqlc.types.Field(Int, graphql_name="productionApps")
 
 
+class CreateTrainingDataSourceInput(sgqlc.types.Input):
+    __schema__ = schema
+    __field_names__ = ("name", "app_id", "config", "data_source_type")
+    name = sgqlc.types.Field(String, graphql_name="name")
+    app_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="appId")
+    config = sgqlc.types.Field(
+        sgqlc.types.non_null(JSONString), graphql_name="config"
+    )
+    data_source_type = sgqlc.types.Field(
+        sgqlc.types.non_null(DataSourceType), graphql_name="dataSourceType"
+    )
+
+
+class CreateTrainingItemInput(sgqlc.types.Input):
+    __schema__ = schema
+    __field_names__ = (
+        "app_id",
+        "item_type",
+        "source_ref",
+        "data",
+        "tags",
+        "data_source_id",
+    )
+    app_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="appId")
+    item_type = sgqlc.types.Field(ItemType, graphql_name="itemType")
+    source_ref = sgqlc.types.Field(String, graphql_name="sourceRef")
+    data = sgqlc.types.Field(JSONString, graphql_name="data")
+    tags = sgqlc.types.Field(JSONString, graphql_name="tags")
+    data_source_id = sgqlc.types.Field(ID, graphql_name="dataSourceId")
+
+
+class CustomerInput(sgqlc.types.Input):
+    __schema__ = schema
+    __field_names__ = (
+        "first_name",
+        "last_name",
+        "email",
+        "cc_emails",
+        "phone",
+        "organization",
+        "address",
+        "address2",
+        "city",
+        "state",
+        "state_name",
+        "zip",
+        "country",
+        "country_name",
+        "vat_number",
+    )
+    first_name = sgqlc.types.Field(
+        sgqlc.types.non_null(String), graphql_name="firstName"
+    )
+    last_name = sgqlc.types.Field(
+        sgqlc.types.non_null(String), graphql_name="lastName"
+    )
+    email = sgqlc.types.Field(
+        sgqlc.types.non_null(String), graphql_name="email"
+    )
+    cc_emails = sgqlc.types.Field(String, graphql_name="ccEmails")
+    phone = sgqlc.types.Field(String, graphql_name="phone")
+    organization = sgqlc.types.Field(String, graphql_name="organization")
+    address = sgqlc.types.Field(String, graphql_name="address")
+    address2 = sgqlc.types.Field(String, graphql_name="address2")
+    city = sgqlc.types.Field(String, graphql_name="city")
+    state = sgqlc.types.Field(String, graphql_name="state")
+    state_name = sgqlc.types.Field(String, graphql_name="stateName")
+    zip = sgqlc.types.Field(String, graphql_name="zip")
+    country = sgqlc.types.Field(String, graphql_name="country")
+    country_name = sgqlc.types.Field(String, graphql_name="countryName")
+    vat_number = sgqlc.types.Field(String, graphql_name="vatNumber")
+
+
+class LlmPromptTemplateInput(sgqlc.types.Input):
+    __schema__ = schema
+    __field_names__ = (
+        "app_id",
+        "name",
+        "version",
+        "active",
+        "text",
+        "model",
+        "provider",
+        "hyperparameters",
+    )
+    app_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="appId")
+    name = sgqlc.types.Field(String, graphql_name="name")
+    version = sgqlc.types.Field(String, graphql_name="version")
+    active = sgqlc.types.Field(Boolean, graphql_name="active")
+    text = sgqlc.types.Field(String, graphql_name="text")
+    model = sgqlc.types.Field(OpenaiTextModel, graphql_name="model")
+    provider = sgqlc.types.Field(LlmProvider, graphql_name="provider")
+    hyperparameters = sgqlc.types.Field(
+        JSONString, graphql_name="hyperparameters"
+    )
+
+
+class PaymentProfileInput(sgqlc.types.Input):
+    __schema__ = schema
+    __field_names__ = (
+        "chargify_token",
+        "billing_address",
+        "billing_address2",
+        "billing_city",
+        "billing_state",
+        "billing_zip",
+        "billing_country",
+    )
+    chargify_token = sgqlc.types.Field(
+        sgqlc.types.non_null(String), graphql_name="chargifyToken"
+    )
+    billing_address = sgqlc.types.Field(String, graphql_name="billingAddress")
+    billing_address2 = sgqlc.types.Field(
+        String, graphql_name="billingAddress2"
+    )
+    billing_city = sgqlc.types.Field(String, graphql_name="billingCity")
+    billing_state = sgqlc.types.Field(String, graphql_name="billingState")
+    billing_zip = sgqlc.types.Field(String, graphql_name="billingZip")
+    billing_country = sgqlc.types.Field(String, graphql_name="billingCountry")
+
+
+class TrainingDataSourceInput(sgqlc.types.Input):
+    __schema__ = schema
+    __field_names__ = ("name", "app_id", "config", "data_source_type")
+    name = sgqlc.types.Field(String, graphql_name="name")
+    app_id = sgqlc.types.Field(ID, graphql_name="appId")
+    config = sgqlc.types.Field(
+        sgqlc.types.non_null(JSONString), graphql_name="config"
+    )
+    data_source_type = sgqlc.types.Field(
+        DataSourceType, graphql_name="dataSourceType"
+    )
+
+
+class TrainingIndexInput(sgqlc.types.Input):
+    __schema__ = schema
+    __field_names__ = ("app_id", "config", "index_type")
+    app_id = sgqlc.types.Field(ID, graphql_name="appId")
+    config = sgqlc.types.Field(
+        sgqlc.types.non_null(JSONString), graphql_name="config"
+    )
+    index_type = sgqlc.types.Field(IndexType, graphql_name="indexType")
+
+
+class TrainingItemInput(sgqlc.types.Input):
+    __schema__ = schema
+    __field_names__ = (
+        "app_id",
+        "item_type",
+        "source_ref",
+        "data",
+        "tags",
+        "data_source_id",
+    )
+    app_id = sgqlc.types.Field(ID, graphql_name="appId")
+    item_type = sgqlc.types.Field(ItemType, graphql_name="itemType")
+    source_ref = sgqlc.types.Field(String, graphql_name="sourceRef")
+    data = sgqlc.types.Field(JSONString, graphql_name="data")
+    tags = sgqlc.types.Field(JSONString, graphql_name="tags")
+    data_source_id = sgqlc.types.Field(ID, graphql_name="dataSourceId")
+
+
 ########################################################################
 # Output Objects and Interfaces
 ########################################################################
+class AccountCancelMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("account",)
+    account = sgqlc.types.Field("AccountType", graphql_name="account")
+
+
+class AccountDisableMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("account",)
+    account = sgqlc.types.Field("AccountType", graphql_name="account")
+
+
 class AccountMetaType(sgqlc.types.Type):
     __schema__ = schema
     __field_names__ = (
@@ -128,6 +409,12 @@ class AccountMetaType(sgqlc.types.Type):
     total_invites = sgqlc.types.Field(Int, graphql_name="totalInvites")
 
 
+class AccountReactivateMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("account",)
+    account = sgqlc.types.Field("AccountType", graphql_name="account")
+
+
 class AccountType(sgqlc.types.Type):
     __schema__ = schema
     __field_names__ = (
@@ -145,6 +432,8 @@ class AccountType(sgqlc.types.Type):
         "usage",
         "next_billing_date",
         "metering_offset_hours",
+        "customer",
+        "subscriptions",
         "subscription",
         "usage_subscription",
         "components",
@@ -365,6 +654,10 @@ class AccountType(sgqlc.types.Type):
     metering_offset_hours = sgqlc.types.Field(
         Int, graphql_name="meteringOffsetHours"
     )
+    customer = sgqlc.types.Field("CustomerType", graphql_name="customer")
+    subscriptions = sgqlc.types.Field(
+        sgqlc.types.list_of("SubscriptionType"), graphql_name="subscriptions"
+    )
     subscription = sgqlc.types.Field(
         "SubscriptionType", graphql_name="subscription"
     )
@@ -398,6 +691,38 @@ class AccountUsageType(sgqlc.types.Type):
     __field_names__ = ("users", "events")
     users = sgqlc.types.Field(JSONString, graphql_name="users")
     events = sgqlc.types.Field(JSONString, graphql_name="events")
+
+
+class AiJobCancelMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("job",)
+    job = sgqlc.types.Field("AiJobType", graphql_name="job")
+
+
+class AiJobType(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = (
+        "id",
+        "created",
+        "modified",
+        "job_type",
+        "state",
+        "state_message",
+        "app",
+        "data_source",
+        "logs",
+    )
+    id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
+    created = sgqlc.types.Field(DateTime, graphql_name="created")
+    modified = sgqlc.types.Field(DateTime, graphql_name="modified")
+    job_type = sgqlc.types.Field(JobType, graphql_name="jobType")
+    state = sgqlc.types.Field(JobState, graphql_name="state")
+    state_message = sgqlc.types.Field(String, graphql_name="stateMessage")
+    app = sgqlc.types.Field("AppType", graphql_name="app")
+    data_source = sgqlc.types.Field(
+        "TrainingDataSourceType", graphql_name="dataSource"
+    )
+    logs = sgqlc.types.Field(String, graphql_name="logs")
 
 
 class AppAnalyticsType(sgqlc.types.Type):
@@ -475,8 +800,8 @@ class AppTeamCreateMutation(sgqlc.types.Type):
 
 class AppTeamDeleteMutation(sgqlc.types.Type):
     __schema__ = schema
-    __field_names__ = ("app_team",)
-    app_team = sgqlc.types.Field("AppTeamType", graphql_name="appTeam")
+    __field_names__ = ("ok",)
+    ok = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="ok")
 
 
 class AppTeamType(sgqlc.types.Type):
@@ -525,6 +850,14 @@ class AppType(sgqlc.types.Type):
         "last_push",
         "grid_version",
         "editor_schemas",
+        "webhook_url",
+        "training_data_sources",
+        "training_index",
+        "ai_jobs",
+        "last_index_ai_job",
+        "llm_prompt_templates",
+        "default_llm_prompt_templates",
+        "training_items",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     created = sgqlc.types.Field(DateTime, graphql_name="created")
@@ -781,6 +1114,220 @@ class AppType(sgqlc.types.Type):
     editor_schemas = sgqlc.types.Field(
         JSONString, graphql_name="editorSchemas"
     )
+    webhook_url = sgqlc.types.Field(
+        String,
+        graphql_name="webhookUrl",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "integration_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(String),
+                        graphql_name="integrationId",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    training_data_sources = sgqlc.types.Field(
+        sgqlc.types.list_of("TrainingDataSourceType"),
+        graphql_name="trainingDataSources",
+        args=sgqlc.types.ArgDict(
+            (
+                ("id", sgqlc.types.Arg(ID, graphql_name="id", default=None)),
+                (
+                    "data_source_type",
+                    sgqlc.types.Arg(
+                        String, graphql_name="dataSourceType", default=None
+                    ),
+                ),
+                (
+                    "name",
+                    sgqlc.types.Arg(String, graphql_name="name", default=None),
+                ),
+                (
+                    "name__icontains",
+                    sgqlc.types.Arg(
+                        String, graphql_name="name_Icontains", default=None
+                    ),
+                ),
+                (
+                    "name__istartswith",
+                    sgqlc.types.Arg(
+                        String, graphql_name="name_Istartswith", default=None
+                    ),
+                ),
+                (
+                    "order_by",
+                    sgqlc.types.Arg(
+                        String, graphql_name="orderBy", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    training_index = sgqlc.types.Field(
+        "TrainingIndexType", graphql_name="trainingIndex"
+    )
+    ai_jobs = sgqlc.types.Field(
+        sgqlc.types.list_of(AiJobType),
+        graphql_name="aiJobs",
+        args=sgqlc.types.ArgDict(
+            (
+                ("id", sgqlc.types.Arg(ID, graphql_name="id", default=None)),
+                (
+                    "offset",
+                    sgqlc.types.Arg(Int, graphql_name="offset", default=None),
+                ),
+                (
+                    "limit",
+                    sgqlc.types.Arg(Int, graphql_name="limit", default=None),
+                ),
+                (
+                    "job_type",
+                    sgqlc.types.Arg(
+                        JobType, graphql_name="jobType", default=None
+                    ),
+                ),
+                (
+                    "order_by",
+                    sgqlc.types.Arg(
+                        String, graphql_name="orderBy", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    last_index_ai_job = sgqlc.types.Field(
+        AiJobType, graphql_name="lastIndexAiJob"
+    )
+    llm_prompt_templates = sgqlc.types.Field(
+        sgqlc.types.list_of("LlmPromptTemplateType"),
+        graphql_name="llmPromptTemplates",
+        args=sgqlc.types.ArgDict(
+            (
+                ("id", sgqlc.types.Arg(ID, graphql_name="id", default=None)),
+                (
+                    "active",
+                    sgqlc.types.Arg(
+                        Boolean, graphql_name="active", default=None
+                    ),
+                ),
+                (
+                    "app_id",
+                    sgqlc.types.Arg(ID, graphql_name="appId", default=None),
+                ),
+                (
+                    "app_id__in",
+                    sgqlc.types.Arg(ID, graphql_name="appId_In", default=None),
+                ),
+                (
+                    "version",
+                    sgqlc.types.Arg(
+                        String, graphql_name="version", default=None
+                    ),
+                ),
+                (
+                    "version__in",
+                    sgqlc.types.Arg(
+                        String, graphql_name="version_In", default=None
+                    ),
+                ),
+                (
+                    "name",
+                    sgqlc.types.Arg(String, graphql_name="name", default=None),
+                ),
+                (
+                    "name__icontains",
+                    sgqlc.types.Arg(
+                        String, graphql_name="name_Icontains", default=None
+                    ),
+                ),
+                (
+                    "name__istartswith",
+                    sgqlc.types.Arg(
+                        String, graphql_name="name_Istartswith", default=None
+                    ),
+                ),
+                (
+                    "order_by",
+                    sgqlc.types.Arg(
+                        String, graphql_name="orderBy", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    default_llm_prompt_templates = sgqlc.types.Field(
+        sgqlc.types.list_of("LlmPromptTemplateType"),
+        graphql_name="defaultLlmPromptTemplates",
+    )
+    training_items = sgqlc.types.Field(
+        "TrainingItemsType",
+        graphql_name="trainingItems",
+        args=sgqlc.types.ArgDict(
+            (
+                ("id", sgqlc.types.Arg(ID, graphql_name="id", default=None)),
+                (
+                    "offset",
+                    sgqlc.types.Arg(Int, graphql_name="offset", default=None),
+                ),
+                (
+                    "limit",
+                    sgqlc.types.Arg(Int, graphql_name="limit", default=None),
+                ),
+                (
+                    "source_ref",
+                    sgqlc.types.Arg(
+                        String, graphql_name="sourceRef", default=None
+                    ),
+                ),
+                (
+                    "source_ref__icontains",
+                    sgqlc.types.Arg(
+                        String,
+                        graphql_name="sourceRef_Icontains",
+                        default=None,
+                    ),
+                ),
+                (
+                    "item_type",
+                    sgqlc.types.Arg(
+                        ItemType, graphql_name="itemType", default=None
+                    ),
+                ),
+                (
+                    "data_source_ids",
+                    sgqlc.types.Arg(
+                        sgqlc.types.list_of(ID),
+                        graphql_name="dataSourceIds",
+                        default=None,
+                    ),
+                ),
+                (
+                    "data_source_type",
+                    sgqlc.types.Arg(
+                        DataSourceType,
+                        graphql_name="dataSourceType",
+                        default=None,
+                    ),
+                ),
+                (
+                    "index_state",
+                    sgqlc.types.Arg(
+                        ItemIndexState, graphql_name="indexState", default=None
+                    ),
+                ),
+                (
+                    "order_by",
+                    sgqlc.types.Arg(
+                        String, graphql_name="orderBy", default=None
+                    ),
+                ),
+            )
+        ),
+    )
 
 
 class AppUpdateMutation(sgqlc.types.Type):
@@ -816,12 +1363,6 @@ class AppUserTypeEdge(sgqlc.types.Type):
     )
 
 
-class CancelPushMutation(sgqlc.types.Type):
-    __schema__ = schema
-    __field_names__ = ("push",)
-    push = sgqlc.types.Field("PushType", graphql_name="push")
-
-
 class ClusterType(sgqlc.types.Type):
     __schema__ = schema
     __field_names__ = ("id", "name", "grid_url", "description", "config")
@@ -853,10 +1394,176 @@ class ConsolePushMutation(sgqlc.types.Type):
     result = sgqlc.types.Field(String, graphql_name="result")
 
 
+class CreatePaymentProfileMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("payment_profile_or_error",)
+    payment_profile_or_error = sgqlc.types.Field(
+        "CreatePaymentMethodResultType", graphql_name="paymentProfileOrError"
+    )
+
+
+class CreditCardType(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = (
+        "id",
+        "first_name",
+        "last_name",
+        "masked_card_number",
+        "card_type",
+        "expiration_month",
+        "expiration_year",
+        "customer_id",
+        "current_vault",
+        "vault_token",
+        "billing_address",
+        "billing_address2",
+        "billing_city",
+        "billing_state",
+        "billing_zip",
+        "billing_country",
+        "customer_vault_token",
+        "payment_type",
+        "disabled",
+        "chargify_token",
+        "site_gateway_setting_id",
+        "gateway_handle",
+    )
+    id = sgqlc.types.Field(Int, graphql_name="id")
+    first_name = sgqlc.types.Field(String, graphql_name="firstName")
+    last_name = sgqlc.types.Field(String, graphql_name="lastName")
+    masked_card_number = sgqlc.types.Field(
+        String, graphql_name="maskedCardNumber"
+    )
+    card_type = sgqlc.types.Field(CardType, graphql_name="cardType")
+    expiration_month = sgqlc.types.Field(Int, graphql_name="expirationMonth")
+    expiration_year = sgqlc.types.Field(Int, graphql_name="expirationYear")
+    customer_id = sgqlc.types.Field(Int, graphql_name="customerId")
+    current_vault = sgqlc.types.Field(
+        CurrentVault, graphql_name="currentVault"
+    )
+    vault_token = sgqlc.types.Field(String, graphql_name="vaultToken")
+    billing_address = sgqlc.types.Field(String, graphql_name="billingAddress")
+    billing_address2 = sgqlc.types.Field(
+        String, graphql_name="billingAddress2"
+    )
+    billing_city = sgqlc.types.Field(String, graphql_name="billingCity")
+    billing_state = sgqlc.types.Field(String, graphql_name="billingState")
+    billing_zip = sgqlc.types.Field(String, graphql_name="billingZip")
+    billing_country = sgqlc.types.Field(String, graphql_name="billingCountry")
+    customer_vault_token = sgqlc.types.Field(
+        String, graphql_name="customerVaultToken"
+    )
+    payment_type = sgqlc.types.Field(String, graphql_name="paymentType")
+    disabled = sgqlc.types.Field(Boolean, graphql_name="disabled")
+    chargify_token = sgqlc.types.Field(String, graphql_name="chargifyToken")
+    site_gateway_setting_id = sgqlc.types.Field(
+        Int, graphql_name="siteGatewaySettingId"
+    )
+    gateway_handle = sgqlc.types.Field(String, graphql_name="gatewayHandle")
+
+
+class CustomerType(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = (
+        "id",
+        "email",
+        "first_name",
+        "last_name",
+        "cc_emails",
+        "phone",
+        "organization",
+        "address",
+        "address2",
+        "city",
+        "state",
+        "state_name",
+        "zip",
+        "country",
+        "country_name",
+        "tax_exempt",
+        "vat_number",
+        "reference",
+        "chargify_server_host",
+        "chargify_public_key",
+        "chargify_security_token",
+        "payment_profiles",
+    )
+    id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
+    email = sgqlc.types.Field(
+        sgqlc.types.non_null(String), graphql_name="email"
+    )
+    first_name = sgqlc.types.Field(String, graphql_name="firstName")
+    last_name = sgqlc.types.Field(String, graphql_name="lastName")
+    cc_emails = sgqlc.types.Field(String, graphql_name="ccEmails")
+    phone = sgqlc.types.Field(String, graphql_name="phone")
+    organization = sgqlc.types.Field(String, graphql_name="organization")
+    address = sgqlc.types.Field(String, graphql_name="address")
+    address2 = sgqlc.types.Field(String, graphql_name="address2")
+    city = sgqlc.types.Field(String, graphql_name="city")
+    state = sgqlc.types.Field(String, graphql_name="state")
+    state_name = sgqlc.types.Field(String, graphql_name="stateName")
+    zip = sgqlc.types.Field(String, graphql_name="zip")
+    country = sgqlc.types.Field(String, graphql_name="country")
+    country_name = sgqlc.types.Field(String, graphql_name="countryName")
+    tax_exempt = sgqlc.types.Field(
+        sgqlc.types.non_null(Boolean), graphql_name="taxExempt"
+    )
+    vat_number = sgqlc.types.Field(String, graphql_name="vatNumber")
+    reference = sgqlc.types.Field(String, graphql_name="reference")
+    chargify_server_host = sgqlc.types.Field(
+        String, graphql_name="chargifyServerHost"
+    )
+    chargify_public_key = sgqlc.types.Field(
+        String, graphql_name="chargifyPublicKey"
+    )
+    chargify_security_token = sgqlc.types.Field(
+        String, graphql_name="chargifySecurityToken"
+    )
+    payment_profiles = sgqlc.types.Field(
+        sgqlc.types.list_of("PaymentProfileType"),
+        graphql_name="paymentProfiles",
+    )
+
+
+class CustomerUpdateMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("customer_or_error",)
+    customer_or_error = sgqlc.types.Field(
+        "UpdateCustomerResultType", graphql_name="customerOrError"
+    )
+
+
+class DefaultPaymentProfileUpdateMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("payment_profile",)
+    payment_profile = sgqlc.types.Field(
+        "PaymentProfileType", graphql_name="paymentProfile"
+    )
+
+
 class GatewayPushMutation(sgqlc.types.Type):
     __schema__ = schema
     __field_names__ = ("result",)
     result = sgqlc.types.Field(String, graphql_name="result")
+
+
+class InputErrorType(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("message", "field_errors")
+    message = sgqlc.types.Field(String, graphql_name="message")
+    field_errors = sgqlc.types.Field(
+        sgqlc.types.list_of("InputFieldError"), graphql_name="fieldErrors"
+    )
+
+
+class InputFieldError(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("name", "message", "error")
+    name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
+    message = sgqlc.types.Field(
+        sgqlc.types.non_null(String), graphql_name="message"
+    )
+    error = sgqlc.types.Field(JSONString, graphql_name="error")
 
 
 class InviteCreateMutation(sgqlc.types.Type):
@@ -899,6 +1606,64 @@ class InviteType(sgqlc.types.Type):
     )
     team = sgqlc.types.Field("TeamType", graphql_name="team")
     valid = sgqlc.types.Field(Boolean, graphql_name="valid")
+
+
+class LlmPromptTemplateCreateMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("llm_prompt_template_or_error",)
+    llm_prompt_template_or_error = sgqlc.types.Field(
+        "LlmPromptTemplateResultType", graphql_name="llmPromptTemplateOrError"
+    )
+
+
+class LlmPromptTemplateDeleteMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("ok",)
+    ok = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="ok")
+
+
+class LlmPromptTemplateType(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = (
+        "id",
+        "created",
+        "modified",
+        "name",
+        "version",
+        "active",
+        "text",
+        "model",
+        "provider",
+        "hyperparameters",
+        "metadata",
+        "app_id",
+    )
+    id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
+    created = sgqlc.types.Field(DateTime, graphql_name="created")
+    modified = sgqlc.types.Field(DateTime, graphql_name="modified")
+    name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
+    version = sgqlc.types.Field(
+        sgqlc.types.non_null(String), graphql_name="version"
+    )
+    active = sgqlc.types.Field(
+        sgqlc.types.non_null(Boolean), graphql_name="active"
+    )
+    text = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="text")
+    model = sgqlc.types.Field(OpenaiTextModel, graphql_name="model")
+    provider = sgqlc.types.Field(LlmProvider, graphql_name="provider")
+    hyperparameters = sgqlc.types.Field(
+        JSONString, graphql_name="hyperparameters"
+    )
+    metadata = sgqlc.types.Field(JSONString, graphql_name="metadata")
+    app_id = sgqlc.types.Field(ID, graphql_name="appId")
+
+
+class LlmPromptTemplateUpdateMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("llm_prompt_template_or_error",)
+    llm_prompt_template_or_error = sgqlc.types.Field(
+        "LlmPromptTemplateResultType", graphql_name="llmPromptTemplateOrError"
+    )
 
 
 class LogType(sgqlc.types.Type):
@@ -967,8 +1732,14 @@ class Mutation(sgqlc.types.Type):
         "update_user_editor_simulator_opened",
         "refresh_user_auth_token",
         "update_account",
-        "create_app",
+        "disable_account",
+        "cancel_account",
+        "reactivate_account",
+        "update_customer",
+        "create_payment_profile",
+        "update_default_payment_profile",
         "update_app",
+        "create_app",
         "delete_app",
         "update_app_vault",
         "push_app",
@@ -990,6 +1761,22 @@ class Mutation(sgqlc.types.Type):
         "push_console",
         "push_gateway",
         "cancel_push",
+        "cancel_ai_job",
+        "update_training_data_source",
+        "create_training_data_source",
+        "delete_training_data_source",
+        "delete_training_data_source_items",
+        "update_training_item",
+        "create_training_item",
+        "delete_training_item",
+        "update_training_index",
+        "clear_training_index",
+        "import_training_data",
+        "index_training_items",
+        "import_and_index_training_items",
+        "update_llm_prompt_template",
+        "create_llm_prompt_template",
+        "delete_llm_prompt_template",
         "meya_oauth",
         "meya_oauth_delete_subscription",
         "twitter_get_webhook_ids",
@@ -1002,6 +1789,7 @@ class Mutation(sgqlc.types.Type):
         "twitter_create_welcome_message_rule",
         "twitter_delete_welcome_message_rule",
         "twitter_list_welcome_message_rule",
+        "openai_verify_api_key",
     )
     update_user = sgqlc.types.Field(
         "UserUpdateMutation",
@@ -1167,6 +1955,178 @@ class Mutation(sgqlc.types.Type):
             )
         ),
     )
+    disable_account = sgqlc.types.Field(
+        AccountDisableMutation,
+        graphql_name="disableAccount",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID),
+                        graphql_name="id",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    cancel_account = sgqlc.types.Field(
+        AccountCancelMutation,
+        graphql_name="cancelAccount",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "cancellation_message",
+                    sgqlc.types.Arg(
+                        String,
+                        graphql_name="cancellationMessage",
+                        default=None,
+                    ),
+                ),
+                (
+                    "delayed",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(Boolean),
+                        graphql_name="delayed",
+                        default=None,
+                    ),
+                ),
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID),
+                        graphql_name="id",
+                        default=None,
+                    ),
+                ),
+                (
+                    "reason_code",
+                    sgqlc.types.Arg(
+                        String, graphql_name="reasonCode", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    reactivate_account = sgqlc.types.Field(
+        AccountReactivateMutation,
+        graphql_name="reactivateAccount",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "coupon_code",
+                    sgqlc.types.Arg(
+                        String, graphql_name="couponCode", default=None
+                    ),
+                ),
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID),
+                        graphql_name="id",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    update_customer = sgqlc.types.Field(
+        CustomerUpdateMutation,
+        graphql_name="updateCustomer",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "customer",
+                    sgqlc.types.Arg(
+                        CustomerInput, graphql_name="customer", default=None
+                    ),
+                ),
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID),
+                        graphql_name="id",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    create_payment_profile = sgqlc.types.Field(
+        CreatePaymentProfileMutation,
+        graphql_name="createPaymentProfile",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID),
+                        graphql_name="id",
+                        default=None,
+                    ),
+                ),
+                (
+                    "payment_profile",
+                    sgqlc.types.Arg(
+                        PaymentProfileInput,
+                        graphql_name="paymentProfile",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    update_default_payment_profile = sgqlc.types.Field(
+        DefaultPaymentProfileUpdateMutation,
+        graphql_name="updateDefaultPaymentProfile",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID),
+                        graphql_name="id",
+                        default=None,
+                    ),
+                ),
+                (
+                    "payment_profile_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(Int),
+                        graphql_name="paymentProfileId",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    update_app = sgqlc.types.Field(
+        AppUpdateMutation,
+        graphql_name="updateApp",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "app_type",
+                    sgqlc.types.Arg(
+                        AppTypeEnum, graphql_name="appType", default=None
+                    ),
+                ),
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID),
+                        graphql_name="id",
+                        default=None,
+                    ),
+                ),
+                (
+                    "name",
+                    sgqlc.types.Arg(String, graphql_name="name", default=None),
+                ),
+            )
+        ),
+    )
     create_app = sgqlc.types.Field(
         AppCreateMutation,
         graphql_name="createApp",
@@ -1199,32 +2159,6 @@ class Mutation(sgqlc.types.Type):
                     sgqlc.types.Arg(
                         String, graphql_name="templateRepoUrl", default=None
                     ),
-                ),
-            )
-        ),
-    )
-    update_app = sgqlc.types.Field(
-        AppUpdateMutation,
-        graphql_name="updateApp",
-        args=sgqlc.types.ArgDict(
-            (
-                (
-                    "app_type",
-                    sgqlc.types.Arg(
-                        AppTypeEnum, graphql_name="appType", default=None
-                    ),
-                ),
-                (
-                    "id",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(ID),
-                        graphql_name="id",
-                        default=None,
-                    ),
-                ),
-                (
-                    "name",
-                    sgqlc.types.Arg(String, graphql_name="name", default=None),
                 ),
             )
         ),
@@ -1754,8 +2688,326 @@ class Mutation(sgqlc.types.Type):
         ),
     )
     cancel_push = sgqlc.types.Field(
-        CancelPushMutation,
+        "PushCancelMutation",
         graphql_name="cancelPush",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID),
+                        graphql_name="id",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    cancel_ai_job = sgqlc.types.Field(
+        AiJobCancelMutation,
+        graphql_name="cancelAiJob",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID),
+                        graphql_name="id",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    update_training_data_source = sgqlc.types.Field(
+        "TrainingDataSourceUpdateMutation",
+        graphql_name="updateTrainingDataSource",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "data_source",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(TrainingDataSourceInput),
+                        graphql_name="dataSource",
+                        default=None,
+                    ),
+                ),
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID),
+                        graphql_name="id",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    create_training_data_source = sgqlc.types.Field(
+        "TrainingDataSourceCreateMutation",
+        graphql_name="createTrainingDataSource",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "data_source",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(CreateTrainingDataSourceInput),
+                        graphql_name="dataSource",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    delete_training_data_source = sgqlc.types.Field(
+        "TrainingDataSourceDeleteMutation",
+        graphql_name="deleteTrainingDataSource",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID),
+                        graphql_name="id",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    delete_training_data_source_items = sgqlc.types.Field(
+        "TrainingDataSourceDeleteItemsMutation",
+        graphql_name="deleteTrainingDataSourceItems",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID),
+                        graphql_name="id",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    update_training_item = sgqlc.types.Field(
+        "TrainingItemUpdateMutation",
+        graphql_name="updateTrainingItem",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID),
+                        graphql_name="id",
+                        default=None,
+                    ),
+                ),
+                (
+                    "item",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(TrainingItemInput),
+                        graphql_name="item",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    create_training_item = sgqlc.types.Field(
+        "TrainingItemCreateMutation",
+        graphql_name="createTrainingItem",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "item",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(CreateTrainingItemInput),
+                        graphql_name="item",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    delete_training_item = sgqlc.types.Field(
+        "TrainingItemDeleteMutation",
+        graphql_name="deleteTrainingItem",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID),
+                        graphql_name="id",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    update_training_index = sgqlc.types.Field(
+        "TrainingIndexUpdateMutation",
+        graphql_name="updateTrainingIndex",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID),
+                        graphql_name="id",
+                        default=None,
+                    ),
+                ),
+                (
+                    "index",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(TrainingIndexInput),
+                        graphql_name="index",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    clear_training_index = sgqlc.types.Field(
+        "TrainingIndexClearMutation",
+        graphql_name="clearTrainingIndex",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID),
+                        graphql_name="id",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    import_training_data = sgqlc.types.Field(
+        "TrainingImportDataMutation",
+        graphql_name="importTrainingData",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "app_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID),
+                        graphql_name="appId",
+                        default=None,
+                    ),
+                ),
+                (
+                    "data_source_ids",
+                    sgqlc.types.Arg(
+                        sgqlc.types.list_of(ID),
+                        graphql_name="dataSourceIds",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    index_training_items = sgqlc.types.Field(
+        "TrainingIndexItemsMutation",
+        graphql_name="indexTrainingItems",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "app_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID),
+                        graphql_name="appId",
+                        default=None,
+                    ),
+                ),
+                (
+                    "data_source_id",
+                    sgqlc.types.Arg(
+                        ID, graphql_name="dataSourceId", default=None
+                    ),
+                ),
+                (
+                    "item_ids",
+                    sgqlc.types.Arg(
+                        sgqlc.types.list_of(ID),
+                        graphql_name="itemIds",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    import_and_index_training_items = sgqlc.types.Field(
+        "TrainingImportAndIndexMutation",
+        graphql_name="importAndIndexTrainingItems",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "app_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID),
+                        graphql_name="appId",
+                        default=None,
+                    ),
+                ),
+                (
+                    "data_source_ids",
+                    sgqlc.types.Arg(
+                        sgqlc.types.list_of(ID),
+                        graphql_name="dataSourceIds",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    update_llm_prompt_template = sgqlc.types.Field(
+        LlmPromptTemplateUpdateMutation,
+        graphql_name="updateLlmPromptTemplate",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID),
+                        graphql_name="id",
+                        default=None,
+                    ),
+                ),
+                (
+                    "llm_prompt_template",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(LlmPromptTemplateInput),
+                        graphql_name="llmPromptTemplate",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    create_llm_prompt_template = sgqlc.types.Field(
+        LlmPromptTemplateCreateMutation,
+        graphql_name="createLlmPromptTemplate",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "llm_prompt_template",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(LlmPromptTemplateInput),
+                        graphql_name="llmPromptTemplate",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    delete_llm_prompt_template = sgqlc.types.Field(
+        LlmPromptTemplateDeleteMutation,
+        graphql_name="deleteLlmPromptTemplate",
         args=sgqlc.types.ArgDict(
             (
                 (
@@ -2030,12 +3282,35 @@ class Mutation(sgqlc.types.Type):
             )
         ),
     )
+    openai_verify_api_key = sgqlc.types.Field(
+        "OpenaiVerifyApiKeyMutation",
+        graphql_name="openaiVerifyApiKey",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "api_key",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(String),
+                        graphql_name="apiKey",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
 
 
 class Node(sgqlc.types.Interface):
     __schema__ = schema
     __field_names__ = ("id",)
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
+
+
+class OpenaiVerifyApiKeyMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("ok", "error")
+    ok = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="ok")
+    error = sgqlc.types.Field(String, graphql_name="error")
 
 
 class PageInfo(sgqlc.types.Type):
@@ -2056,6 +3331,60 @@ class PageInfo(sgqlc.types.Type):
     end_cursor = sgqlc.types.Field(String, graphql_name="endCursor")
 
 
+class PaymentProfileType(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = (
+        "id",
+        "first_name",
+        "last_name",
+        "billing_address",
+        "billing_address2",
+        "billing_city",
+        "billing_state",
+        "billing_zip",
+        "billing_country",
+        "bank_name",
+        "masked_bank_routing_number",
+        "masked_bank_account_number",
+        "bank_account_type",
+        "payment_type",
+        "verified",
+        "masked_card_number",
+        "card_type",
+        "expiration_month",
+        "expiration_year",
+    )
+    id = sgqlc.types.Field(Int, graphql_name="id")
+    first_name = sgqlc.types.Field(String, graphql_name="firstName")
+    last_name = sgqlc.types.Field(String, graphql_name="lastName")
+    billing_address = sgqlc.types.Field(String, graphql_name="billingAddress")
+    billing_address2 = sgqlc.types.Field(
+        String, graphql_name="billingAddress2"
+    )
+    billing_city = sgqlc.types.Field(String, graphql_name="billingCity")
+    billing_state = sgqlc.types.Field(String, graphql_name="billingState")
+    billing_zip = sgqlc.types.Field(String, graphql_name="billingZip")
+    billing_country = sgqlc.types.Field(String, graphql_name="billingCountry")
+    bank_name = sgqlc.types.Field(String, graphql_name="bankName")
+    masked_bank_routing_number = sgqlc.types.Field(
+        String, graphql_name="maskedBankRoutingNumber"
+    )
+    masked_bank_account_number = sgqlc.types.Field(
+        String, graphql_name="maskedBankAccountNumber"
+    )
+    bank_account_type = sgqlc.types.Field(
+        String, graphql_name="bankAccountType"
+    )
+    payment_type = sgqlc.types.Field(PaymentType, graphql_name="paymentType")
+    verified = sgqlc.types.Field(String, graphql_name="verified")
+    masked_card_number = sgqlc.types.Field(
+        String, graphql_name="maskedCardNumber"
+    )
+    card_type = sgqlc.types.Field(CardType, graphql_name="cardType")
+    expiration_month = sgqlc.types.Field(Int, graphql_name="expirationMonth")
+    expiration_year = sgqlc.types.Field(Int, graphql_name="expirationYear")
+
+
 class PermissionSetType(sgqlc.types.Type):
     __schema__ = schema
     __field_names__ = ("id", "name", "description", "internal")
@@ -2071,10 +3400,19 @@ class PermissionSetType(sgqlc.types.Type):
 
 class ProductType(sgqlc.types.Type):
     __schema__ = schema
-    __field_names__ = ("id", "name", "limits")
+    __field_names__ = ("id", "name", "limits", "require_billing_address")
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
     limits = sgqlc.types.Field(JSONString, graphql_name="limits")
+    require_billing_address = sgqlc.types.Field(
+        Boolean, graphql_name="requireBillingAddress"
+    )
+
+
+class PushCancelMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("push",)
+    push = sgqlc.types.Field("PushType", graphql_name="push")
 
 
 class PushType(sgqlc.types.Type):
@@ -2114,6 +3452,7 @@ class Query(sgqlc.types.Type):
         "versions",
         "all_apps",
         "active_apps",
+        "llm_prompt_templates",
     )
     user = sgqlc.types.Field("UserType", graphql_name="user")
     clusters = sgqlc.types.Field(
@@ -2183,6 +3522,18 @@ class Query(sgqlc.types.Type):
             (("id", sgqlc.types.Arg(ID, graphql_name="id", default=None)),)
         ),
     )
+    llm_prompt_templates = sgqlc.types.Field(
+        sgqlc.types.list_of(LlmPromptTemplateType),
+        graphql_name="llmPromptTemplates",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "app_id",
+                    sgqlc.types.Arg(ID, graphql_name="appId", default=None),
+                ),
+            )
+        ),
+    )
 
 
 class SecretType(sgqlc.types.Type):
@@ -2206,10 +3557,39 @@ class SubscriptionComponentType(sgqlc.types.Type):
 
 class SubscriptionType(sgqlc.types.Type):
     __schema__ = schema
-    __field_names__ = ("id", "next_billing_date", "product", "components")
+    __field_names__ = (
+        "id",
+        "next_billing_date",
+        "state",
+        "cancel_at_end_of_period",
+        "product",
+        "components",
+        "product_price",
+        "credit_card",
+        "has_credit_card",
+        "is_credit_card_expired",
+        "days_to_credit_card_expired",
+    )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     next_billing_date = sgqlc.types.Field(
         DateTime, graphql_name="nextBillingDate"
+    )
+    state = sgqlc.types.Field(
+        SubscriptionState,
+        graphql_name="state",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "refresh",
+                    sgqlc.types.Arg(
+                        Boolean, graphql_name="refresh", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    cancel_at_end_of_period = sgqlc.types.Field(
+        Boolean, graphql_name="cancelAtEndOfPeriod"
     )
     product = sgqlc.types.Field(ProductType, graphql_name="product")
     components = sgqlc.types.Field(
@@ -2226,6 +3606,15 @@ class SubscriptionType(sgqlc.types.Type):
             )
         ),
     )
+    product_price = sgqlc.types.Field(MoneyType, graphql_name="productPrice")
+    credit_card = sgqlc.types.Field(CreditCardType, graphql_name="creditCard")
+    has_credit_card = sgqlc.types.Field(Boolean, graphql_name="hasCreditCard")
+    is_credit_card_expired = sgqlc.types.Field(
+        Boolean, graphql_name="isCreditCardExpired"
+    )
+    days_to_credit_card_expired = sgqlc.types.Field(
+        Int, graphql_name="daysToCreditCardExpired"
+    )
 
 
 class TeamCreateMutation(sgqlc.types.Type):
@@ -2236,8 +3625,8 @@ class TeamCreateMutation(sgqlc.types.Type):
 
 class TeamDeleteMutation(sgqlc.types.Type):
     __schema__ = schema
-    __field_names__ = ("team",)
-    team = sgqlc.types.Field("TeamType", graphql_name="team")
+    __field_names__ = ("ok",)
+    ok = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="ok")
 
 
 class TeamMemberAddMutation(sgqlc.types.Type):
@@ -2509,6 +3898,248 @@ class TeamUpdateMutation(sgqlc.types.Type):
     team = sgqlc.types.Field(TeamType, graphql_name="team")
     permission_set = sgqlc.types.Field(
         PermissionSetType, graphql_name="permissionSet"
+    )
+
+
+class TrainingDataSourceAnalyticsType(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("total_items",)
+    total_items = sgqlc.types.Field(Int, graphql_name="totalItems")
+
+
+class TrainingDataSourceCreateMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("data_source_or_error",)
+    data_source_or_error = sgqlc.types.Field(
+        "TrainingDataSourceResultType", graphql_name="dataSourceOrError"
+    )
+
+
+class TrainingDataSourceDeleteItemsMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("ok",)
+    ok = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="ok")
+
+
+class TrainingDataSourceDeleteMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("ok",)
+    ok = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="ok")
+
+
+class TrainingDataSourceType(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = (
+        "id",
+        "created",
+        "modified",
+        "data_source_type",
+        "name",
+        "config",
+        "jobs",
+        "last_job",
+        "analytics",
+    )
+    id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
+    created = sgqlc.types.Field(DateTime, graphql_name="created")
+    modified = sgqlc.types.Field(DateTime, graphql_name="modified")
+    data_source_type = sgqlc.types.Field(
+        DataSourceType, graphql_name="dataSourceType"
+    )
+    name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
+    config = sgqlc.types.Field(JSONString, graphql_name="config")
+    jobs = sgqlc.types.Field(
+        sgqlc.types.list_of(AiJobType),
+        graphql_name="jobs",
+        args=sgqlc.types.ArgDict(
+            (
+                ("id", sgqlc.types.Arg(ID, graphql_name="id", default=None)),
+                (
+                    "offset",
+                    sgqlc.types.Arg(Int, graphql_name="offset", default=None),
+                ),
+                (
+                    "limit",
+                    sgqlc.types.Arg(Int, graphql_name="limit", default=None),
+                ),
+                (
+                    "job_type",
+                    sgqlc.types.Arg(
+                        JobType, graphql_name="jobType", default=None
+                    ),
+                ),
+                (
+                    "order_by",
+                    sgqlc.types.Arg(
+                        String, graphql_name="orderBy", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    last_job = sgqlc.types.Field(
+        AiJobType,
+        graphql_name="lastJob",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "job_type",
+                    sgqlc.types.Arg(
+                        JobType, graphql_name="jobType", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    analytics = sgqlc.types.Field(
+        TrainingDataSourceAnalyticsType, graphql_name="analytics"
+    )
+
+
+class TrainingDataSourceUpdateMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("data_source_or_error",)
+    data_source_or_error = sgqlc.types.Field(
+        "TrainingDataSourceResultType", graphql_name="dataSourceOrError"
+    )
+
+
+class TrainingImportAndIndexMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("jobs",)
+    jobs = sgqlc.types.Field(
+        sgqlc.types.list_of(AiJobType), graphql_name="jobs"
+    )
+
+
+class TrainingImportDataMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("jobs",)
+    jobs = sgqlc.types.Field(
+        sgqlc.types.list_of(AiJobType), graphql_name="jobs"
+    )
+
+
+class TrainingIndexClearMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("ok",)
+    ok = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="ok")
+
+
+class TrainingIndexItemsMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("job",)
+    job = sgqlc.types.Field(AiJobType, graphql_name="job")
+
+
+class TrainingIndexType(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = (
+        "id",
+        "created",
+        "modified",
+        "index_type",
+        "config",
+        "jobs",
+        "last_job",
+    )
+    id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
+    created = sgqlc.types.Field(DateTime, graphql_name="created")
+    modified = sgqlc.types.Field(DateTime, graphql_name="modified")
+    index_type = sgqlc.types.Field(IndexType, graphql_name="indexType")
+    config = sgqlc.types.Field(JSONString, graphql_name="config")
+    jobs = sgqlc.types.Field(
+        sgqlc.types.list_of(AiJobType),
+        graphql_name="jobs",
+        args=sgqlc.types.ArgDict(
+            (
+                ("id", sgqlc.types.Arg(ID, graphql_name="id", default=None)),
+                (
+                    "offset",
+                    sgqlc.types.Arg(Int, graphql_name="offset", default=None),
+                ),
+                (
+                    "limit",
+                    sgqlc.types.Arg(Int, graphql_name="limit", default=None),
+                ),
+                (
+                    "order_by",
+                    sgqlc.types.Arg(
+                        String, graphql_name="orderBy", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    last_job = sgqlc.types.Field(AiJobType, graphql_name="lastJob")
+
+
+class TrainingIndexUpdateMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("index_or_error",)
+    index_or_error = sgqlc.types.Field(
+        "TrainingIndexResultType", graphql_name="indexOrError"
+    )
+
+
+class TrainingItemCreateMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("item_or_error",)
+    item_or_error = sgqlc.types.Field(
+        "TrainingItemResultOrErrorType", graphql_name="itemOrError"
+    )
+
+
+class TrainingItemDeleteMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("ok",)
+    ok = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="ok")
+
+
+class TrainingItemType(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = (
+        "id",
+        "created",
+        "modified",
+        "item_type",
+        "source_ref",
+        "data",
+        "tags",
+        "index_state",
+        "index_state_message",
+        "data_source",
+    )
+    id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
+    created = sgqlc.types.Field(DateTime, graphql_name="created")
+    modified = sgqlc.types.Field(DateTime, graphql_name="modified")
+    item_type = sgqlc.types.Field(ItemType, graphql_name="itemType")
+    source_ref = sgqlc.types.Field(String, graphql_name="sourceRef")
+    data = sgqlc.types.Field(JSONString, graphql_name="data")
+    tags = sgqlc.types.Field(JSONString, graphql_name="tags")
+    index_state = sgqlc.types.Field(ItemIndexState, graphql_name="indexState")
+    index_state_message = sgqlc.types.Field(
+        String, graphql_name="indexStateMessage"
+    )
+    data_source = sgqlc.types.Field(
+        TrainingDataSourceType, graphql_name="dataSource"
+    )
+
+
+class TrainingItemUpdateMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("item_or_error",)
+    item_or_error = sgqlc.types.Field(
+        "TrainingItemResultOrErrorType", graphql_name="itemOrError"
+    )
+
+
+class TrainingItemsType(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("total_items", "items")
+    total_items = sgqlc.types.Field(Int, graphql_name="totalItems")
+    items = sgqlc.types.Field(
+        sgqlc.types.list_of(TrainingItemType), graphql_name="items"
     )
 
 
@@ -2808,6 +4439,35 @@ class AppUserType(sgqlc.types.Type, Node):
 ########################################################################
 # Unions
 ########################################################################
+class CreatePaymentMethodResultType(sgqlc.types.Union):
+    __schema__ = schema
+    __types__ = (PaymentProfileType, InputErrorType)
+
+
+class LlmPromptTemplateResultType(sgqlc.types.Union):
+    __schema__ = schema
+    __types__ = (LlmPromptTemplateType, InputErrorType)
+
+
+class TrainingDataSourceResultType(sgqlc.types.Union):
+    __schema__ = schema
+    __types__ = (TrainingDataSourceType, InputErrorType)
+
+
+class TrainingIndexResultType(sgqlc.types.Union):
+    __schema__ = schema
+    __types__ = (TrainingIndexType, InputErrorType)
+
+
+class TrainingItemResultOrErrorType(sgqlc.types.Union):
+    __schema__ = schema
+    __types__ = (TrainingItemType, InputErrorType)
+
+
+class UpdateCustomerResultType(sgqlc.types.Union):
+    __schema__ = schema
+    __types__ = (CustomerType, InputErrorType)
+
 
 ########################################################################
 # Schema Entry Points

@@ -6,6 +6,8 @@ from itertools import chain
 from itertools import islice
 from jinja2 import Environment
 from jinja2 import Template
+from jinja2 import TemplateSyntaxError
+from jinja2 import UndefinedError
 from jinja2 import nodes
 from jinja2.compiler import CodeGenerator
 from jinja2.compiler import has_safe_repr
@@ -13,8 +15,10 @@ from jinja2.utils import concat
 from jinja2.utils import escape
 from meya.util.translation import gettext
 from meya.util.translation import ngettext
+from meya.util.undefined import MissingUndefinedError
 from meya.util.undefined import StrictUndefined
 from typing import Any
+from typing import Dict
 
 
 def no_eval_native_concat(nodes):
@@ -331,3 +335,65 @@ async def from_template_async(context: dict, obj: CustomNativeTemplate) -> Any:
         result._fail_with_undefined_error()
     else:
         return result
+
+
+class TemplateError(Exception):
+    def __init__(self, message, lineno, template):
+        self.message = message
+        self.lineno = lineno
+        self.template = template
+
+    def __str__(self):
+        lines = self.template.splitlines()
+        try:
+            line = lines[self.lineno - 1]
+            return f"Line {self.lineno} '...{line}...': {self.message}"
+        except IndexError:
+            return f"Line {self.lineno}: {self.message}"
+
+
+async def render_dict(
+    context: Dict[str, Any], data: Dict[str, Any]
+) -> Dict[str, Any]:
+    rendered_data = {}
+
+    for key, value in data.items():
+        key = await render_value(context, key)
+        if isinstance(value, dict):
+            rendered_data[key] = await render_dict(context, value)
+        elif isinstance(value, list):
+            rendered_data[key] = await render_list(context, value)
+        else:
+            rendered_data[key] = await render_value(context, value)
+
+    return rendered_data
+
+
+async def render_list(context: Dict[str, Any], data: list) -> list:
+    rendered_data = []
+    for index, value in enumerate(data):
+        if isinstance(value, dict):
+            rendered_data.append(await render_dict(context, value))
+        elif isinstance(value, list):
+            rendered_data.append(await render_list(context, value))
+        else:
+            rendered_data.append(await render_value(context, value))
+    return rendered_data
+
+
+async def render_value(context: Dict[str, Any], value: Any) -> Any:
+    if isinstance(value, str):
+        try:
+            template = to_template_async(value)
+            return await from_template_async(context, template)
+        except (
+            TemplateSyntaxError,
+            MissingUndefinedError,
+            UndefinedError,
+        ) as error:
+            raise TemplateError(
+                message=error.message,
+                lineno=error.lineno,
+                template=value,
+            )
+    return value

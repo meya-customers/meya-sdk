@@ -130,9 +130,15 @@ class DbView(ABC):
         end: str = "+",
         start: str = "-",
         count: int = 256,
+        include_internal: bool = False,
     ) -> List[BotEntry]:
         return await self._query_ledger(
-            "bot", dict(bot_id=bot_id, thread_id=thread_id), end, start, count
+            "bot",
+            dict(bot_id=bot_id, thread_id=thread_id),
+            end,
+            start,
+            count,
+            include_internal,
         )
 
     async def query_event_ledger(
@@ -141,9 +147,15 @@ class DbView(ABC):
         end: str = "+",
         start: str = "-",
         count: int = 256,
+        include_internal: bool = False,
     ) -> List[Event]:
         return await self._query_ledger(
-            "event", dict(thread_id=thread_id), end, start, count
+            "event",
+            dict(thread_id=thread_id),
+            end,
+            start,
+            count,
+            include_internal,
         )
 
     async def query_http_ledger(
@@ -152,16 +164,27 @@ class DbView(ABC):
         end: str = "+",
         start: str = "-",
         count: int = 256,
+        include_internal: bool = False,
     ) -> List[HttpEntry]:
         return await self._query_ledger(
-            "http", dict(request_id=request_id), end, start, count
+            "http",
+            dict(request_id=request_id),
+            end,
+            start,
+            count,
+            include_internal,
         )
 
     async def query_log_ledger(
-        self, trace_id: str, end: str = "+", start: str = "-", count: int = 256
+        self,
+        trace_id: str,
+        end: str = "+",
+        start: str = "-",
+        count: int = 256,
+        include_internal: bool = False,
     ) -> List[LogEntry]:
         return await self._query_ledger(
-            "log", dict(trace_id=trace_id), end, start, count
+            "log", dict(trace_id=trace_id), end, start, count, include_internal
         )
 
     async def query_presence_ledger(
@@ -170,9 +193,15 @@ class DbView(ABC):
         end: str = "+",
         start: str = "-",
         count: int = 256,
+        include_internal: bool = False,
     ) -> List[PresenceEvent]:
         return await self._query_ledger(
-            "presence", dict(thread_id=thread_id), end, start, count
+            "presence",
+            dict(thread_id=thread_id),
+            end,
+            start,
+            count,
+            include_internal,
         )
 
     async def query_thread_ledger(
@@ -181,16 +210,27 @@ class DbView(ABC):
         end: str = "+",
         start: str = "-",
         count: int = 256,
+        include_internal: bool = False,
     ) -> List[ThreadEntry]:
         return await self._query_ledger(
-            "thread", dict(thread_id=thread_id), end, start, count
+            "thread",
+            dict(thread_id=thread_id),
+            end,
+            start,
+            count,
+            include_internal,
         )
 
     async def query_user_ledger(
-        self, user_id: str, end: str = "+", start: str = "-", count: int = 256
+        self,
+        user_id: str,
+        end: str = "+",
+        start: str = "-",
+        count: int = 256,
+        include_internal: bool = False,
     ) -> List[UserEntry]:
         return await self._query_ledger(
-            "user", dict(user_id=user_id), end, start, count
+            "user", dict(user_id=user_id), end, start, count, include_internal
         )
 
     async def query_ws_ledger(
@@ -199,9 +239,15 @@ class DbView(ABC):
         end: str = "+",
         start: str = "-",
         count: int = 256,
+        include_internal: bool = False,
     ) -> List[WsEntry]:
         return await self._query_ledger(
-            "ws", dict(request_id=request_id), end, start, count
+            "ws",
+            dict(request_id=request_id),
+            end,
+            start,
+            count,
+            include_internal,
         )
 
     async def query_bot_active_triggers_view(
@@ -476,6 +522,7 @@ class DbView(ABC):
         end: str,
         start: str,
         count: int,
+        include_internal: bool = False,
     ) -> List[Any]:
         pass
 

@@ -145,6 +145,7 @@ class HttpView:
         request_id: Optional[str] = None,
         text: Optional[str] = None,
         timeout: Real = DEFAULT_TIMEOUT,
+        internal: bool = False,
     ) -> HttpRequestEntry:
         """
         :param method: method for the new :class:`MeyaRequestHttpEntry` object.
@@ -172,6 +173,7 @@ class HttpView:
                request.
         :param integration_id: (optional) The ID of the specific integration making
                this request.
+        :param internal: Mark this request as an internal request. Defaults to `False`.
         :return: :class:`MeyaResponseHttpEntry <MeyaResponseHttpEntry>` object
         :rtype: http.MeyaResponseHttpEntry
         """
@@ -201,6 +203,7 @@ class HttpView:
             text=text,
             timeout=timeout,
             url=url,
+            internal=internal,
         )
 
     async def request(

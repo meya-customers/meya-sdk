@@ -1,7 +1,6 @@
 import pytest
 
 from datetime import timedelta
-from freezegun import freeze_time
 from meya.element.element_test import frozen_milliseconds_timestamp
 from meya.front.payload.comment import FrontCommentGet
 from meya.front.payload.conversation import FrontConversationGet
@@ -37,6 +36,7 @@ from meya.front.payload.rules import FrontRule
 from meya.front.payload.tag import FrontTagTarget
 from meya.front.payload.tag import FrontTagTargetData
 from meya.front.payload.teammate import FrontTeammateGet
+from meya.time.freeze import freeze_time
 from meya.time.time import from_utc_milliseconds_timestamp
 from unittest.mock import MagicMock
 

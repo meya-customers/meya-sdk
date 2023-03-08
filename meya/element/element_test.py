@@ -5,7 +5,6 @@ import meya.util.uuid
 from contextlib import ExitStack
 from contextlib import nullcontext
 from dataclasses import MISSING
-from freezegun import freeze_time
 from meya.app_config import AppConfig
 from meya.app_vault import AppVault
 from meya.bot.element import Bot
@@ -51,6 +50,7 @@ from meya.text.event.say import SayEvent
 from meya.thread.entry.data import ThreadDataEntry
 from meya.thread.entry.link import ThreadLinkEntry
 from meya.thread.entry.unlink import ThreadUnlinkEntry
+from meya.time.freeze import freeze_time
 from meya.time.time import from_utc_milliseconds_timestamp
 from meya.trigger.element import Trigger
 from meya.trigger.element import TriggerActionEntry

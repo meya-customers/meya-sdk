@@ -151,6 +151,7 @@ async def test_segment_track_redacted():
                     "properties": {
                         "trace_id": "-",
                         "sensitive": True,
+                        "internal": False,
                         "user_id": "U123",
                         "thread_id": "T123",
                         "integration_id": "I123",

@@ -132,6 +132,7 @@ def test_from_typed_dict(entry, typed_dict):
                     "quick_replies": [],
                     "header": {},
                     "sensitive": False,
+                    "internal": False,
                     "text": "T456",
                     "thread_id": "T0",
                     "trace_id": "xyz",
@@ -171,6 +172,7 @@ def test_from_typed_dict(entry, typed_dict):
                     "quick_replies": [],
                     "header": {},
                     "sensitive": False,
+                    "internal": False,
                     "text": "",
                     "thread_id": "T0",
                     "trace_id": "xyz",
@@ -209,6 +211,7 @@ def test_from_typed_dict(entry, typed_dict):
                         "data": {"bot_id": "B1", "thread_id": "T0"},
                     },
                     "sensitive": False,
+                    "internal": False,
                     "spec": {
                         "data": {
                             "composer": {},

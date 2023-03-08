@@ -78,6 +78,7 @@ class MockDbView(DbView):
         end: str,
         start: str,
         count: int,
+        include_internal: bool = False,
     ) -> List[Any]:
         return self._check_request(ledger, instance_data, end, start, count)
 

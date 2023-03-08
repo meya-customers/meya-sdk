@@ -36,6 +36,7 @@ class Entry(ABC):
     )
     trace_id: str = entry_field(default="-", default_missing=True)
     sensitive: bool = entry_field(default=False)
+    internal: bool = entry_field(default=False)
 
     current: ClassVar = cast(ScopedContextVar["Entry"], ScopedContextVar())
     current_encrypted: ClassVar = cast(
