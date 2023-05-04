@@ -11,6 +11,17 @@ from meya.zendesk.support.payload.user import ZendeskSupportUserGet
 
 @dataclass
 class ZendeskSupportTicketUnhandledTrigger(WebhookTrigger):
+    """
+    This is a special trigger that will match any incoming Zendesk Support
+    webhooks that are not linked to a specific Meya thread and user, thereby
+    being "unhandled".
+
+    This trigger is particularly useful if you would like to send agent
+    initiated messages to the user where the user has not actively requested
+    a support agent. Check the [agent-initiated conversations guide](https://docs.meya.ai/docs/sending-agent-initiated-conversations-with-zendesk-support-and-zendesk-sunshine-conversations)
+    for more information.
+    """
+
     entry: ZendeskSupportTicketUnhandledEvent = process_field()
     encrypted_entry: ZendeskSupportTicketUnhandledEvent = process_field()
 

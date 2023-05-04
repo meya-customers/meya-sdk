@@ -9,8 +9,16 @@ from typing import Optional
 
 @dataclass
 class ZendeskSupportTicketShowComponent(BaseApiComponent, ZendeskBaseMixin):
+    """
+    This component will query the Zendesk Support API for a ticket and return
+    the ticket API response payload.
+    """
+
     @dataclass
     class Response:
         result: ZendeskSupportTicketGet = response_field(sensitive=True)
 
-    ticket_id: Optional[int] = element_field(default=None)
+    ticket_id: Optional[int] = element_field(
+        default=None,
+        help="The ID of the ticket to show.",
+    )

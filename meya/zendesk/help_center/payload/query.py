@@ -6,6 +6,7 @@ from meya.zendesk.help_center.payload import ZendeskHelpCenterBaseResponse
 from meya.zendesk.help_center.payload.article import ZendeskHelpCenterArticle
 from typing import List
 from typing import Optional
+from typing import Union
 
 
 class ZendeskHelpCenterSortBy(SimpleEnum):
@@ -22,8 +23,8 @@ class ZendeskHelpCenterSortOrder(SimpleEnum):
 
 @dataclass
 class ZendeskHelpCenterPagination(Payload):
-    page: int = payload_field()
-    per_page: int = payload_field()
+    page: Optional[int] = payload_field(default=None)
+    per_page: Optional[int] = payload_field(default=None)
 
 
 @dataclass
@@ -38,14 +39,14 @@ class ZendeskHelpCenterSort(ZendeskHelpCenterPagination):
 class ZendeskHelpCenterSearchRequest(ZendeskHelpCenterSort):
     query: str = payload_field()
     brand_id: Optional[int] = payload_field(default=None)
-    category: Optional[int] = payload_field(default=None)
+    category: Optional[Union[int, str]] = payload_field(default=None)
     created_after: Optional[str] = payload_field(default=None)
     created_at: Optional[str] = payload_field(default=None)
     created_before: Optional[str] = payload_field(default=None)
     label_names: Optional[str] = payload_field(default=None)
     locale: Optional[str] = payload_field(default=None)
     multibrand: Optional[bool] = payload_field(default=None)
-    section: Optional[int] = payload_field(default=None)
+    section: Optional[Union[int, str]] = payload_field(default=None)
     updated_after: Optional[str] = payload_field(default=None)
     updated_at: Optional[str] = payload_field(default=None)
     updated_before: Optional[str] = payload_field(default=None)

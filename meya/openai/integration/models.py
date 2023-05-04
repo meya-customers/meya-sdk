@@ -25,6 +25,10 @@ class ModelEnumMixin:
 
 
 class OpenaiTextModel(ModelEnumMixin, SimpleEnum, metaclass=SimpleEnumMeta):
+    GPT_4 = "gpt-4"
+    GPT_4_0314 = "gpt-4-0314"
+    GPT_4_32K = "gpt-4-32k"
+    GPT_4_32K_0314 = "gpt-4-32k-0314"
     GPT_3_5_TURBO_0301 = "gpt-3.5-turbo-0301"
     GPT_3_5_TURBO = "gpt-3.5-turbo"
     TEXT_DAVINCI_003 = "text-davinci-003"
@@ -36,7 +40,11 @@ class OpenaiTextModel(ModelEnumMixin, SimpleEnum, metaclass=SimpleEnumMeta):
     @classmethod
     def max_tokens(cls, model: "OpenaiTextModel") -> int:
         max_prompts = {
-            # OpenAI model limits: https://platform.openai.com/docs/models/gpt-3-5
+            # OpenAI model limits: https://platform.openai.com/docs/models/gpt-4
+            OpenaiTextModel.GPT_4: 8192,
+            OpenaiTextModel.GPT_4_0314: 8192,
+            OpenaiTextModel.GPT_4_32K: 32768,
+            OpenaiTextModel.GPT_4_32K_0314: 32768,
             OpenaiTextModel.GPT_3_5_TURBO_0301: 4096,
             OpenaiTextModel.GPT_3_5_TURBO: 4096,
             OpenaiTextModel.TEXT_DAVINCI_003: 4000,
@@ -59,7 +67,14 @@ class OpenaiTextModel(ModelEnumMixin, SimpleEnum, metaclass=SimpleEnumMeta):
 
     @classmethod
     def chat_models(cls) -> List["OpenaiTextModel"]:
-        return [cls.GPT_3_5_TURBO_0301, cls.GPT_3_5_TURBO]
+        return [
+            cls.GPT_4,
+            cls.GPT_4_0314,
+            cls.GPT_4_32K,
+            cls.GPT_4_32K_0314,
+            cls.GPT_3_5_TURBO_0301,
+            cls.GPT_3_5_TURBO,
+        ]
 
 
 class OpenaiEmbeddingModel(

@@ -4,6 +4,7 @@ from meya.element.field import element_field
 from meya.element.field import response_field
 from meya.openai.integration.integration import OpenaiIntegrationRef
 from meya.util.enum import SimpleEnum
+from numbers import Real
 from typing import List
 from typing import Optional
 
@@ -78,4 +79,12 @@ class OpenaiQuestionComponent(InteractiveComponent):
             "fit within the model's maximum token limit."
         ),
         default=20,
+    )
+    api_timeout: Optional[Real] = element_field(
+        help=(
+            "The maximum number of seconds to wait for a response from the "
+            "OpenAI API. If not set, the default timeout of 30 seconds will "
+            "be used."
+        ),
+        default=None,
     )

@@ -11,8 +11,16 @@ from typing import Optional
 class ZendeskSupportTicketUpdateComponent(
     BaseApiComponent, ZendeskTicketMixin
 ):
+    """
+    This component will update the specified ticket with the provided
+    fields and return the ticket API response payload.
+    """
+
     @dataclass
     class Response:
         result: ZendeskSupportTicketGet = response_field(sensitive=True)
 
-    ticket_id: Optional[int] = element_field(default=None)
+    ticket_id: Optional[int] = element_field(
+        default=None,
+        help="The ID of the ticket to update.",
+    )

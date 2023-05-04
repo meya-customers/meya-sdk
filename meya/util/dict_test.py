@@ -31,6 +31,7 @@ from meya.session.trigger.chat.open import ChatOpenTrigger
 from meya.text.component.ask import AskComponent
 from meya.text.component.say import SayComponent
 from meya.util.dict import from_dict
+from meya.util.dict import merge_dicts
 from meya.util.dict import to_dict
 from meya.util.msgpack import from_msgpack
 from meya.util.msgpack import to_msgpack
@@ -517,3 +518,13 @@ def test_from_str_subclass():
 def test_nan():
     assert to_dict(math.nan) == "nan"
     assert math.isnan(from_dict(float, "nan"))
+
+
+def test_merge_dicts():
+    d1 = {"a": {"c": 4, "d": {"e": 2}}, "b": 2}
+    d2 = {"a": {"d": {"e": 6}}, "b": 3, "c": 4}
+    assert merge_dicts(d1, d2) == {
+        "a": {"c": 4, "d": {"e": 6}},
+        "b": 3,
+        "c": 4,
+    }

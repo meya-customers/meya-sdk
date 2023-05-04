@@ -522,3 +522,13 @@ def from_dict(
         raise ValueError(f"mismatch for {target_type} and {obj}")
     else:
         return MISSING
+
+
+def merge_dicts(destination_dict: dict, source_dict: dict) -> dict:
+    merged_dict = destination_dict.copy()
+    for key, value in source_dict.items():
+        if isinstance(value, dict) and key in destination_dict:
+            merged_dict[key] = merge_dicts(destination_dict[key], value)
+        else:
+            merged_dict[key] = value
+    return merged_dict

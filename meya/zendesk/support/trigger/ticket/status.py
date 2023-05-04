@@ -8,4 +8,17 @@ from meya.zendesk.support.trigger.ticket.update import (
 
 @dataclass
 class ZendeskSupportTicketStatusTrigger(ZendeskSupportTicketUpdateTrigger):
-    status: ZendeskSupportTicketStatus = element_field(default=None)
+    """
+    This trigger will match the status of the incoming Zendesk Support
+    ticket webhook. For example, this is particularly useful if you would
+    like to run a flow when a ticket is `closed`, and you would like to get
+    some feedback from the user through a survey or a CSAT score.
+    """
+
+    status: ZendeskSupportTicketStatus = element_field(
+        default=None,
+        help=(
+            "The status of the ticket to match. This can be one of `new`, "
+            "`open`, `pending`, `hold`, `solved`, or `closed`."
+        ),
+    )

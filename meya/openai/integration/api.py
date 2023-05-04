@@ -33,8 +33,7 @@ class OpenaiApi(Api):
             url=f"{self.api_root}/completions",
             auth=self.auth,
             json=completion_request.to_dict(),
-            timeout=20.0,
-            **kwargs,
+            **{"timeout": 30.0, **kwargs},
         )
         return OpenaiCompletionResponse.from_dict(response.data)
 
@@ -47,8 +46,7 @@ class OpenaiApi(Api):
             url=f"{self.api_root}/chat/completions",
             auth=self.auth,
             json=chat_completion_request.to_dict(),
-            timeout=20.0,
-            **kwargs,
+            **{"timeout": 30.0, **kwargs},
         )
         return OpenaiChatCompletionResponse.from_dict(response.data)
 
@@ -61,8 +59,7 @@ class OpenaiApi(Api):
             url=f"{self.api_root}/embeddings",
             auth=self.auth,
             json=embedding_request.to_dict(),
-            timeout=10.0,
-            **kwargs,
+            **{"timeout": 30.0, **kwargs},
         )
         return OpenaiEmbeddingResponse.from_dict(response.data)
 

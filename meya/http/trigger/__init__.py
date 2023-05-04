@@ -11,7 +11,14 @@ from typing import Any
 class WebhookTrigger(Trigger):
     is_abstract: bool = meta_field(value=True)
 
-    when: Any = element_field(default=True)
+    when: Any = element_field(
+        default=True,
+        help=(
+            "Custom condition for when to evaluate this trigger. Check the "
+            "[trigger when guide](https://docs.meya.ai/docs/triggers-1#when) "
+            "for more info."
+        ),
+    )
 
     entry: WebhookEvent = process_field()
     encrypted_entry: WebhookEvent = process_field()

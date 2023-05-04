@@ -58,7 +58,13 @@ class CurrentVault(sgqlc.types.Enum):
 
 class DataSourceType(sgqlc.types.Enum):
     __schema__ = schema
-    __choices__ = ("WEB_CRAWLER", "SITEMAP", "URL_LIST", "TEXT")
+    __choices__ = (
+        "WEB_CRAWLER",
+        "SITEMAP",
+        "URL_LIST",
+        "TEXT",
+        "ZENDESK_HELP_CENTER",
+    )
 
 
 DateTime = sgqlc.types.datetime.DateTime
@@ -101,6 +107,7 @@ class JobState(sgqlc.types.Enum):
         "CANCELLED",
         "COMPLETE",
         "CRAWLING",
+        "IMPORTING",
         "FAILED",
         "INDEXING",
         "QUEUED",
@@ -125,6 +132,10 @@ class Money(sgqlc.types.Scalar):
 class OpenaiTextModel(sgqlc.types.Enum):
     __schema__ = schema
     __choices__ = (
+        "GPT_4",
+        "GPT_4_0314",
+        "GPT_4_32K",
+        "GPT_4_32K_0314",
         "GPT_3_5_TURBO_0301",
         "GPT_3_5_TURBO",
         "TEXT_DAVINCI_003",
@@ -1790,6 +1801,7 @@ class Mutation(sgqlc.types.Type):
         "twitter_delete_welcome_message_rule",
         "twitter_list_welcome_message_rule",
         "openai_verify_api_key",
+        "zendesk_verify_api_token",
     )
     update_user = sgqlc.types.Field(
         "UserUpdateMutation",
@@ -3298,6 +3310,38 @@ class Mutation(sgqlc.types.Type):
             )
         ),
     )
+    zendesk_verify_api_token = sgqlc.types.Field(
+        "ZendeskVerifyApiTokenMutation",
+        graphql_name="zendeskVerifyApiToken",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "api_token",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(String),
+                        graphql_name="apiToken",
+                        default=None,
+                    ),
+                ),
+                (
+                    "email",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(String),
+                        graphql_name="email",
+                        default=None,
+                    ),
+                ),
+                (
+                    "subdomain",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(String),
+                        graphql_name="subdomain",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
 
 
 class Node(sgqlc.types.Interface):
@@ -3939,6 +3983,7 @@ class TrainingDataSourceType(sgqlc.types.Type):
         "jobs",
         "last_job",
         "analytics",
+        "zendesk_help_center",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     created = sgqlc.types.Field(DateTime, graphql_name="created")
@@ -3993,6 +4038,9 @@ class TrainingDataSourceType(sgqlc.types.Type):
     )
     analytics = sgqlc.types.Field(
         TrainingDataSourceAnalyticsType, graphql_name="analytics"
+    )
+    zendesk_help_center = sgqlc.types.Field(
+        "ZendeskHelpCenterType", graphql_name="zendeskHelpCenter"
     )
 
 
@@ -4402,6 +4450,60 @@ class VersionsType(sgqlc.types.Type):
     console = sgqlc.types.Field(String, graphql_name="console")
     meya_sdk = sgqlc.types.Field(String, graphql_name="meyaSdk")
     meya_cli = sgqlc.types.Field(String, graphql_name="meyaCli")
+
+
+class ZendeskHelpCenterCategoryType(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("id", "name")
+    id = sgqlc.types.Field(ID, graphql_name="id")
+    name = sgqlc.types.Field(String, graphql_name="name")
+
+
+class ZendeskHelpCenterLabelType(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("id", "name")
+    id = sgqlc.types.Field(ID, graphql_name="id")
+    name = sgqlc.types.Field(String, graphql_name="name")
+
+
+class ZendeskHelpCenterSectionType(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("id", "name")
+    id = sgqlc.types.Field(ID, graphql_name="id")
+    name = sgqlc.types.Field(String, graphql_name="name")
+
+
+class ZendeskHelpCenterType(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("labels", "categories", "sections")
+    labels = sgqlc.types.Field(
+        sgqlc.types.list_of(ZendeskHelpCenterLabelType), graphql_name="labels"
+    )
+    categories = sgqlc.types.Field(
+        sgqlc.types.list_of(ZendeskHelpCenterCategoryType),
+        graphql_name="categories",
+    )
+    sections = sgqlc.types.Field(
+        sgqlc.types.list_of(ZendeskHelpCenterSectionType),
+        graphql_name="sections",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "category_id",
+                    sgqlc.types.Arg(
+                        ID, graphql_name="categoryId", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+
+
+class ZendeskVerifyApiTokenMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("ok", "error")
+    ok = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="ok")
+    error = sgqlc.types.Field(String, graphql_name="error")
 
 
 class AppUserType(sgqlc.types.Type, Node):

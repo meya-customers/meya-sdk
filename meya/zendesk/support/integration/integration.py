@@ -70,44 +70,11 @@ class ZendeskSupportIntegrationFilter(CspIntegrationFilter):
 @dataclass
 class ZendeskSupportIntegration(ZendeskBaseIntegration, CspIntegration):
     """
-    # Install instructions
-
-    ## API token
-    https://SUBDOMAIN.zendesk.com/agent/admin/api/settings
-
-    - Log in with the bot agent email
-    - Create the bot agent API token
-
-    ## HTTP target
-    https://SUBDOMAIN.zendesk.com/agent/admin/extensions
-
-    - Create a new HTTP target (note the name for the Trigger step below)
-    - Use your webhook URL. (Found via `meya webhooks` command)
-    - Method POST
-    - Username "meya"
-    - Generate and use your own target password
-    - Test target using JSON body: {"test": "RANDOM_STRING"}
-    - You should receive a 200 response and "message": "Zendesk Support HTTP target success!"
-    - Note: for subsequent tests change the value of RANDOM_STRING to avoid cached responses
-    - If successful, create the target
-
-    ## Trigger
-    https://SUBDOMAIN.zendesk.com/agent/admin/triggers
-
-    - Create a new Trigger
-    - Add two "ANY" conditions: "Ticket is Created" and "Ticket
-    is Updated"
-    - Add an Action "Notify target" pointing to your new HTTP target
-
-    Use this JSON body:
-
-    ```json
-    {
-        "ticket_id": "{{ticket.id}}",
-        "updated_at": "{{ticket.updated_at_with_timestamp}}",
-        "current_user_id": "{{current_user.id}}"
-    }
-    ```
+    This integration elements handles all incoming and outgoing events to and
+    from Zendesk Support. It contains all the configuration properties needed
+    to connect to Zendesk Support. Follow the instructions in the
+    Zendesk Support integration [setup guide](https://docs.meya.ai/docs/how-to-set-up-a-zendesk-support-integration)
+    to configure this integration.
     """
 
     NAME: ClassVar[str] = "zendesk_support"
