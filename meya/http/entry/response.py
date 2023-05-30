@@ -38,6 +38,10 @@ class HttpUnexpectedResponseStatus(HttpResponseError):
         return CIMultiDict(self.headers or {}).get(name, default)
 
 
+class HttpTooManyRequests(HttpUnexpectedResponseStatus):
+    pass
+
+
 @dataclass
 class HttpResponseEntry(HttpEntry):
     content_type: Optional[str] = entry_field()

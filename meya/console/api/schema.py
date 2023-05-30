@@ -64,6 +64,7 @@ class DataSourceType(sgqlc.types.Enum):
         "URL_LIST",
         "TEXT",
         "ZENDESK_HELP_CENTER",
+        "NOTION",
     )
 
 
@@ -430,6 +431,8 @@ class AccountType(sgqlc.types.Type):
     __schema__ = schema
     __field_names__ = (
         "id",
+        "created",
+        "modified",
         "name",
         "enabled",
         "meta",
@@ -450,6 +453,8 @@ class AccountType(sgqlc.types.Type):
         "components",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
+    created = sgqlc.types.Field(DateTime, graphql_name="created")
+    modified = sgqlc.types.Field(DateTime, graphql_name="modified")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
     enabled = sgqlc.types.Field(
         sgqlc.types.non_null(Boolean), graphql_name="enabled"
@@ -505,6 +510,14 @@ class AccountType(sgqlc.types.Type):
                         String, graphql_name="orderBy", default=None
                     ),
                 ),
+                (
+                    "offset",
+                    sgqlc.types.Arg(Int, graphql_name="offset", default=None),
+                ),
+                (
+                    "limit",
+                    sgqlc.types.Arg(Int, graphql_name="limit", default=None),
+                ),
             )
         ),
     )
@@ -552,6 +565,14 @@ class AccountType(sgqlc.types.Type):
                         String, graphql_name="orderBy", default=None
                     ),
                 ),
+                (
+                    "offset",
+                    sgqlc.types.Arg(Int, graphql_name="offset", default=None),
+                ),
+                (
+                    "limit",
+                    sgqlc.types.Arg(Int, graphql_name="limit", default=None),
+                ),
             )
         ),
     )
@@ -582,6 +603,14 @@ class AccountType(sgqlc.types.Type):
                     sgqlc.types.Arg(
                         String, graphql_name="orderBy", default=None
                     ),
+                ),
+                (
+                    "offset",
+                    sgqlc.types.Arg(Int, graphql_name="offset", default=None),
+                ),
+                (
+                    "limit",
+                    sgqlc.types.Arg(Int, graphql_name="limit", default=None),
                 ),
             )
         ),
@@ -620,6 +649,14 @@ class AccountType(sgqlc.types.Type):
                         String, graphql_name="orderBy", default=None
                     ),
                 ),
+                (
+                    "offset",
+                    sgqlc.types.Arg(Int, graphql_name="offset", default=None),
+                ),
+                (
+                    "limit",
+                    sgqlc.types.Arg(Int, graphql_name="limit", default=None),
+                ),
             )
         ),
     )
@@ -650,6 +687,14 @@ class AccountType(sgqlc.types.Type):
                     sgqlc.types.Arg(
                         String, graphql_name="orderBy", default=None
                     ),
+                ),
+                (
+                    "offset",
+                    sgqlc.types.Arg(Int, graphql_name="offset", default=None),
+                ),
+                (
+                    "limit",
+                    sgqlc.types.Arg(Int, graphql_name="limit", default=None),
                 ),
             )
         ),
@@ -845,6 +890,7 @@ class AppType(sgqlc.types.Type):
     __field_names__ = (
         "id",
         "created",
+        "modified",
         "name",
         "app_type",
         "state",
@@ -872,6 +918,7 @@ class AppType(sgqlc.types.Type):
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     created = sgqlc.types.Field(DateTime, graphql_name="created")
+    modified = sgqlc.types.Field(DateTime, graphql_name="modified")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
     app_type = sgqlc.types.Field(AppTypeEnum, graphql_name="appType")
     state = sgqlc.types.Field(AppStateEnum, graphql_name="state")
@@ -896,6 +943,14 @@ class AppType(sgqlc.types.Type):
                     sgqlc.types.Arg(
                         String, graphql_name="orderBy", default=None
                     ),
+                ),
+                (
+                    "offset",
+                    sgqlc.types.Arg(Int, graphql_name="offset", default=None),
+                ),
+                (
+                    "limit",
+                    sgqlc.types.Arg(Int, graphql_name="limit", default=None),
                 ),
             )
         ),
@@ -1073,6 +1128,14 @@ class AppType(sgqlc.types.Type):
                         String, graphql_name="orderBy", default=None
                     ),
                 ),
+                (
+                    "offset",
+                    sgqlc.types.Arg(Int, graphql_name="offset", default=None),
+                ),
+                (
+                    "limit",
+                    sgqlc.types.Arg(Int, graphql_name="limit", default=None),
+                ),
             )
         ),
     )
@@ -1107,6 +1170,41 @@ class AppType(sgqlc.types.Type):
         graphql_name="pushes",
         args=sgqlc.types.ArgDict(
             (
+                ("id", sgqlc.types.Arg(ID, graphql_name="id", default=None)),
+                (
+                    "next_revision",
+                    sgqlc.types.Arg(
+                        String, graphql_name="nextRevision", default=None
+                    ),
+                ),
+                (
+                    "state",
+                    sgqlc.types.Arg(
+                        String, graphql_name="state", default=None
+                    ),
+                ),
+                (
+                    "user__id",
+                    sgqlc.types.Arg(ID, graphql_name="user_Id", default=None),
+                ),
+                (
+                    "push_type",
+                    sgqlc.types.Arg(
+                        String, graphql_name="pushType", default=None
+                    ),
+                ),
+                (
+                    "app_type",
+                    sgqlc.types.Arg(
+                        String, graphql_name="appType", default=None
+                    ),
+                ),
+                (
+                    "order_by",
+                    sgqlc.types.Arg(
+                        String, graphql_name="orderBy", default=None
+                    ),
+                ),
                 (
                     "offset",
                     sgqlc.types.Arg(Int, graphql_name="offset", default=None),
@@ -1174,6 +1272,14 @@ class AppType(sgqlc.types.Type):
                     sgqlc.types.Arg(
                         String, graphql_name="orderBy", default=None
                     ),
+                ),
+                (
+                    "offset",
+                    sgqlc.types.Arg(Int, graphql_name="offset", default=None),
+                ),
+                (
+                    "limit",
+                    sgqlc.types.Arg(Int, graphql_name="limit", default=None),
                 ),
             )
         ),
@@ -1266,6 +1372,14 @@ class AppType(sgqlc.types.Type):
                     sgqlc.types.Arg(
                         String, graphql_name="orderBy", default=None
                     ),
+                ),
+                (
+                    "offset",
+                    sgqlc.types.Arg(Int, graphql_name="offset", default=None),
+                ),
+                (
+                    "limit",
+                    sgqlc.types.Arg(Int, graphql_name="limit", default=None),
                 ),
             )
         ),
@@ -1802,6 +1916,7 @@ class Mutation(sgqlc.types.Type):
         "twitter_list_welcome_message_rule",
         "openai_verify_api_key",
         "zendesk_verify_api_token",
+        "notion_verify_api_token",
     )
     update_user = sgqlc.types.Field(
         "UserUpdateMutation",
@@ -3342,12 +3457,35 @@ class Mutation(sgqlc.types.Type):
             )
         ),
     )
+    notion_verify_api_token = sgqlc.types.Field(
+        "NotionVerifyApiTokenMutation",
+        graphql_name="notionVerifyApiToken",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "api_token",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(String),
+                        graphql_name="apiToken",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
 
 
 class Node(sgqlc.types.Interface):
     __schema__ = schema
     __field_names__ = ("id",)
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
+
+
+class NotionVerifyApiTokenMutation(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("ok", "error")
+    ok = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="ok")
+    error = sgqlc.types.Field(String, graphql_name="error")
 
 
 class OpenaiVerifyApiKeyMutation(sgqlc.types.Type):
@@ -3546,6 +3684,14 @@ class Query(sgqlc.types.Type):
                     sgqlc.types.Arg(
                         String, graphql_name="orderBy", default=None
                     ),
+                ),
+                (
+                    "offset",
+                    sgqlc.types.Arg(Int, graphql_name="offset", default=None),
+                ),
+                (
+                    "limit",
+                    sgqlc.types.Arg(Int, graphql_name="limit", default=None),
                 ),
             )
         ),
@@ -3774,6 +3920,14 @@ class TeamType(sgqlc.types.Type):
                         String, graphql_name="orderBy", default=None
                     ),
                 ),
+                (
+                    "offset",
+                    sgqlc.types.Arg(Int, graphql_name="offset", default=None),
+                ),
+                (
+                    "limit",
+                    sgqlc.types.Arg(Int, graphql_name="limit", default=None),
+                ),
             )
         ),
     )
@@ -3820,6 +3974,14 @@ class TeamType(sgqlc.types.Type):
                     sgqlc.types.Arg(
                         String, graphql_name="orderBy", default=None
                     ),
+                ),
+                (
+                    "offset",
+                    sgqlc.types.Arg(Int, graphql_name="offset", default=None),
+                ),
+                (
+                    "limit",
+                    sgqlc.types.Arg(Int, graphql_name="limit", default=None),
                 ),
             )
         ),
@@ -3877,6 +4039,14 @@ class TeamType(sgqlc.types.Type):
                         String, graphql_name="orderBy", default=None
                     ),
                 ),
+                (
+                    "offset",
+                    sgqlc.types.Arg(Int, graphql_name="offset", default=None),
+                ),
+                (
+                    "limit",
+                    sgqlc.types.Arg(Int, graphql_name="limit", default=None),
+                ),
             )
         ),
     )
@@ -3899,6 +4069,14 @@ class TeamType(sgqlc.types.Type):
                     sgqlc.types.Arg(
                         String, graphql_name="orderBy", default=None
                     ),
+                ),
+                (
+                    "offset",
+                    sgqlc.types.Arg(Int, graphql_name="offset", default=None),
+                ),
+                (
+                    "limit",
+                    sgqlc.types.Arg(Int, graphql_name="limit", default=None),
                 ),
             )
         ),
@@ -3930,6 +4108,14 @@ class TeamType(sgqlc.types.Type):
                     sgqlc.types.Arg(
                         String, graphql_name="orderBy", default=None
                     ),
+                ),
+                (
+                    "offset",
+                    sgqlc.types.Arg(Int, graphql_name="offset", default=None),
+                ),
+                (
+                    "limit",
+                    sgqlc.types.Arg(Int, graphql_name="limit", default=None),
                 ),
             )
         ),
@@ -4323,6 +4509,14 @@ class UserType(sgqlc.types.Type):
                         String, graphql_name="orderBy", default=None
                     ),
                 ),
+                (
+                    "offset",
+                    sgqlc.types.Arg(Int, graphql_name="offset", default=None),
+                ),
+                (
+                    "limit",
+                    sgqlc.types.Arg(Int, graphql_name="limit", default=None),
+                ),
             )
         ),
     )
@@ -4359,6 +4553,14 @@ class UserType(sgqlc.types.Type):
                     sgqlc.types.Arg(
                         String, graphql_name="orderBy", default=None
                     ),
+                ),
+                (
+                    "offset",
+                    sgqlc.types.Arg(Int, graphql_name="offset", default=None),
+                ),
+                (
+                    "limit",
+                    sgqlc.types.Arg(Int, graphql_name="limit", default=None),
                 ),
             )
         ),
@@ -4406,6 +4608,14 @@ class UserType(sgqlc.types.Type):
                     sgqlc.types.Arg(
                         String, graphql_name="orderBy", default=None
                     ),
+                ),
+                (
+                    "offset",
+                    sgqlc.types.Arg(Int, graphql_name="offset", default=None),
+                ),
+                (
+                    "limit",
+                    sgqlc.types.Arg(Int, graphql_name="limit", default=None),
                 ),
             )
         ),
