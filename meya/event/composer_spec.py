@@ -18,11 +18,18 @@ class ComposerVisibility(SimpleEnum):
 
 
 @dataclass
+class ComposerCharacterLimit:
+    length: int = 1000
+    error_text: Optional[str] = None
+
+
+@dataclass
 class ComposerCommonSpec:
     focus: Optional[ComposerFocus] = field(default=None)
     placeholder: Optional[str] = field(default=None)
     collapse_placeholder: Optional[str] = field(default=None)
     visibility: Optional[ComposerVisibility] = field(default=None)
+    character_limit: Optional[ComposerCharacterLimit] = field(default=None)
 
 
 @dataclass
@@ -41,6 +48,7 @@ class ComposerEventSpec(ComposerCommonSpec):
             placeholder=composer.placeholder,
             collapse_placeholder=composer.collapse_placeholder,
             visibility=composer.visibility,
+            character_limit=composer.character_limit,
         )
 
     def __or__(self, other: "ComposerEventSpec") -> "ComposerEventSpec":
@@ -55,6 +63,9 @@ class ComposerEventSpec(ComposerCommonSpec):
             visibility=self.visibility
             if self.visibility is not None
             else other.visibility,
+            character_limit=self.character_limit
+            if self.character_limit
+            else other.character_limit,
         )
 
 

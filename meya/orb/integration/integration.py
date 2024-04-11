@@ -59,6 +59,12 @@ class OrbThemeConfigSpec(OrbThemeCommonSpec):
 
 
 @dataclass
+class ComposerUpload:
+    progress_text: Optional[str] = None
+    error_text: Optional[str] = None
+
+
+@dataclass
 class OrbComposerCommonSpec(ComposerCommonSpec):
     placeholder_text: Optional[str] = None
     collapse_placeholder_text: Optional[str] = None
@@ -67,6 +73,7 @@ class OrbComposerCommonSpec(ComposerCommonSpec):
     image_button_text: Optional[str] = None
     camera_button_text: Optional[str] = None
     gallery_button_text: Optional[str] = None
+    upload: Optional[ComposerUpload] = None
 
 
 @dataclass
@@ -86,6 +93,7 @@ class OrbComposerConfigSpec(ComposerEventSpec, OrbComposerCommonSpec):
             placeholder=base_result.placeholder,
             collapse_placeholder=base_result.collapse_placeholder,
             visibility=base_result.visibility,
+            character_limit=base_result.character_limit,
             placeholder_text=composer.placeholder_text,
             collapse_placeholder_text=composer.collapse_placeholder_text,
             file_button_text=composer.file_button_text,
@@ -93,6 +101,7 @@ class OrbComposerConfigSpec(ComposerEventSpec, OrbComposerCommonSpec):
             image_button_text=composer.image_button_text,
             camera_button_text=composer.camera_button_text,
             gallery_button_text=composer.gallery_button_text,
+            upload=composer.upload,
         )
 
 
