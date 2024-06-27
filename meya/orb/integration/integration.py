@@ -235,6 +235,8 @@ class OrbMediaUploadElementSpec(OrbMediaUploadCommonSpec):
 
 @dataclass
 class OrbMediaUploadConfigSpec(OrbMediaUploadCommonSpec):
+    max_size: Optional[int] = None
+
     @classmethod
     def from_element_spec(
         cls, media_upload: OrbMediaUploadElementSpec
