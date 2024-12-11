@@ -57,6 +57,9 @@ class TwilioBaseIntegration(Integration):
             "e.g. MGXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX."
         ),
     )
+    rehost_media: Optional[bool] = element_field(
+        default=False, help="Rehost media on a public CDN URL."
+    )
 
     def validate(self):
         super().validate()

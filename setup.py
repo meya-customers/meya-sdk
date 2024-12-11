@@ -4,7 +4,7 @@ from setuptools import setup
 setup(
     name="meya-sdk",
     packages=find_namespace_packages(),
-    version="2.8.7",
+    version="2.8.8",
     description="Meya SDK",
     url="https://meya.ai",
     author="Meya",
