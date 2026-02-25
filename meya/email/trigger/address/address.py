@@ -15,7 +15,10 @@ class EmailAddressTriggerResponse:
 @dataclass
 class EmailAddressTrigger(TextTrigger):
     async def match(self) -> TriggerMatchResult:
-        result = self.validate_email(self.entry.text)
+        # Triggers should match on syntax only to avoid DNS/network variance.
+        result = self.validate_email(
+            self.entry.text, check_deliverability=False
+        )
         if self.confidence is not None or result:
             confidence = self.confidence or self.MAX_CONFIDENCE
             return self.succeed(
@@ -26,9 +29,13 @@ class EmailAddressTrigger(TextTrigger):
             return self.fail()
 
     @staticmethod
-    def validate_email(text: str) -> Optional[str]:
+    def validate_email(
+        text: str, *, check_deliverability: bool = True
+    ) -> Optional[str]:
         try:
-            valid = validate_email(text)
+            valid = validate_email(
+                text, check_deliverability=check_deliverability
+            )
             return valid.email
         except EmailNotValidError:
             return None
