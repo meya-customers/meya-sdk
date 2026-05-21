@@ -157,6 +157,8 @@ class MultiRatingComponent(FieldComponent):
             buttons, _triggers = ButtonEventSpec.from_element_spec_union_list(
                 button_specs, skip_triggers=True
             )
+            for button, option in zip(buttons, options):
+                button.result = option.score
 
             fill = group.rating.fill if group.fill is None else group.fill
             backfill = (
