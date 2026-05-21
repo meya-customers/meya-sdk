@@ -125,6 +125,11 @@ class AbstractButtonElementSpec(ButtonCommonSpec, ABC):
 class AbstractButtonEventSpec(ButtonCommonSpec, ABC):
     icon: Optional[IconEventSpec] = None
     menu: Optional[List["ButtonEventSpec"]] = None
+    # Carries the option's score for clients that collect multiple picks
+    # before submission (multi-rating). FLOW_NEXT/ACTION/etc. buttons don't
+    # need this — the click is keyed off button_id and the original `result`
+    # is replayed from the trigger registry on the server.
+    result: Any = field(default_factory=MISSING_FACTORY)
 
 
 @dataclass
