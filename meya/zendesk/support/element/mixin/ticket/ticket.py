@@ -21,6 +21,17 @@ class ZendeskTicketMixin(ZendeskBaseMixin):
     comment: Optional[str] = element_field(
         default=None, help="Add a comment to the ticket."
     )
+    comment_html_body: Optional[str] = element_field(
+        default=None,
+        help=(
+            "Add an HTML comment to the ticket. When set, this is sent to "
+            "Zendesk as the comment's `html_body`, which lets you embed "
+            "inline media (e.g. `<img>` tags pointing at your own S3 "
+            "instance) and other rich formatting that the plain `comment` "
+            "field would render as text. If both `comment` and "
+            "`comment_html_body` are provided, Zendesk uses `html_body`."
+        ),
+    )
     comment_attachments: Optional[List[str]] = element_field(
         default=None,
         help=(

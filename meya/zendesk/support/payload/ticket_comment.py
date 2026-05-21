@@ -46,5 +46,7 @@ class ZendeskSupportTicketCommentGet(ZendeskSupportTicketCommentBase):
 @dataclass
 class ZendeskSupportTicketCommentCreate(ZendeskSupportTicketCommentBase):
     author_id: Optional[int] = payload_field(default=None)
+    body: Optional[str] = payload_field(default=None)
+    html_body: Optional[str] = payload_field(default=None)
     public: Optional[bool] = payload_field(default=None)
     uploads: Optional[List[str]] = payload_field(default=None)
