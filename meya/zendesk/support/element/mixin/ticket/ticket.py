@@ -32,6 +32,10 @@ class ZendeskTicketMixin(ZendeskBaseMixin):
             "`comment_html_body` are provided, Zendesk uses `html_body`."
         ),
     )
+    comment_author_id: Optional[int] = element_field(
+        default=None,
+        help="The Zendesk user ID to attribute the comment to.",
+    )
     comment_attachments: Optional[List[str]] = element_field(
         default=None,
         help=(

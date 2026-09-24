@@ -1,3 +1,5 @@
+import dns.resolver
+import dns.rrset
 import pytest
 
 from meya.button.spec import ButtonElementSpec
@@ -32,6 +34,31 @@ from meya.form.event.submit import FormSubmitEvent
 from meya.form.trigger import FormTrigger
 from meya.icon.spec import IconEventSpec
 from meya.util.dict import to_dict
+
+
+@pytest.fixture(autouse=True)
+def email_dns(monkeypatch):
+    """Keep real email validation, but never depend on public DNS records."""
+    queries = []
+    deliverable_domains = {
+        "meya.ai.",
+        "bar.ai.",
+        "xn--80a1acny.xn--p1ai.",
+        "bar.com.",
+    }
+
+    def query(domain, record_type):
+        queries.append((domain, record_type))
+        if domain == "gmail.con.":
+            raise dns.resolver.NXDOMAIN()
+        assert domain in deliverable_domains
+        assert record_type == "MX"
+        return dns.rrset.from_text(
+            domain, 60, "IN", "MX", "10 mail.example.org."
+        )
+
+    monkeypatch.setattr(dns.resolver, "query", query)
+    return queries
 
 
 @pytest.mark.asyncio
@@ -92,11 +119,13 @@ async def test_component_start():
         ("Foo@Bar.ai", "Foo@bar.ai"),
         ("Foo@Почта.рф", "Foo@почта.рф"),
         ("Foo@xn--80a1acny.xn--p1ai", "Foo@почта.рф"),
-        ("Фью@Bar.com", "Фью@bar.com"),
+        ("Фью@meya.ai", "Фью@meya.ai"),
     ],
 )
 @pytest.mark.asyncio
-async def test_component_next_valid(user_text: str, user_email: str):
+async def test_component_next_valid(
+    user_text: str, user_email: str, email_dns
+):
     component = EmailAddressAskFormComponent(
         ask_form="What is your email?",
         error_message="Invalid email, please try again.",
@@ -126,6 +155,8 @@ async def test_component_next_valid(user_text: str, user_email: str):
         sub_entry=component_next_entry,
         expected_pub_entries=[form_ok_event, flow_next_entry],
     )
+    assert len(email_dns) == 1
+    assert email_dns[0][1] == "MX"
 
 
 @pytest.mark.parametrize(
@@ -133,7 +164,7 @@ async def test_component_next_valid(user_text: str, user_email: str):
     [("bogus",), ("@bogus.com",), ("bogus@.com",), ("bogus@gmail.con",)],
 )
 @pytest.mark.asyncio
-async def test_component_next_invalid_retry(user_text: str):
+async def test_component_next_invalid_retry(user_text: str, email_dns):
     bot = create_bot()
     thread = create_thread()
     component = EmailAddressAskFormComponent(
@@ -206,3 +237,11 @@ async def test_component_next_invalid_retry(user_text: str):
         thread=thread,
         extra_elements=[bot],
     )
+    if user_text == "bogus@gmail.con":
+        assert email_dns == [
+            ("gmail.con.", "MX"),
+            ("gmail.con.", "A"),
+            ("gmail.con.", "AAAA"),
+        ]
+    else:
+        assert email_dns == []
